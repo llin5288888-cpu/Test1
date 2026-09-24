@@ -26,6 +26,8 @@ python3 -m http.server 8000
 
 ## Hinweise
 
-- Das Kontaktformular prüft alle Eingaben, der Versand ist aber nur simuliert. Für echten Versand in `js/contact.js` einen Endpunkt (eigenes Backend, Formspree o. ä.) per `fetch()` anbinden.
+- **Kontaktformular:** Standardmäßig öffnet sich beim Absenden das E-Mail-Programm des Besuchers mit fertig ausgefüllter Nachricht an `MAIL_TO`.
+  Für Versand direkt aus der Seite ein kostenloses Formular bei [Formspree](https://formspree.io) anlegen und die Adresse in `js/contact.js` bei `FORM_ENDPOINT` eintragen
+  (z. B. `"https://formspree.io/f/abcdwxyz"`). Formspree dann in der Datenschutzerklärung als Dienstleister ergänzen.
 - Alle Bilder sind selbst erstellte SVG-Illustrationen in `img/` und können durch echte Produktfotos ersetzt werden.
 - Firmen- und Rechtsangaben sind Platzhalter und müssen vor einer Veröffentlichung ersetzt werden.

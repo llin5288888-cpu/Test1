@@ -847,3 +847,14 @@ p { margin: 0 0 1em; }
   .footer-grid { grid-template-columns: 1fr; }
   .specs { grid-template-columns: 1fr; }
 }
+
+.form-error {
+  border: 1px solid #8b1d2c;
+  border-left-width: 3px;
+  background: #fbf3f4;
+  color: #5e1420;
+  padding: 0.9rem 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+.form-error[hidden] { display: none; }

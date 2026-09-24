@@ -99,13 +99,17 @@
           </label>
           <span class="error-msg">Bitte stimmen Sie der Datenschutzerklärung zu.</span>
         </div>
+        <div class="form-error" id="form-error" role="alert" hidden>
+          Die Nachricht konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie direkt an
+          <a href="mailto:hallo@halden-uhren.de">hallo@halden-uhren.de</a>.
+        </div>
         <button class="btn btn-dark" type="submit">Nachricht senden</button>
         <p style="font-size:.8rem;color:var(--muted);margin:1rem 0 0">* Pflichtfelder</p>
       </form>
       <div class="form-success" role="status">
         <div class="check">✓</div>
         <h3>Vielen Dank, <span id="success-name"></span>!</h3>
-        <p style="color:var(--muted)">Ihre Nachricht ist bei uns eingegangen. Wir melden uns innerhalb eines Werktags bei Ihnen.</p>
+        <p style="color:var(--muted)" id="success-text">Ihre Nachricht ist bei uns eingegangen. Wir melden uns innerhalb eines Werktags bei Ihnen.</p>
         <button class="btn btn-outline" id="send-again" type="button">Weitere Nachricht senden</button>
       </div>
     </div>
