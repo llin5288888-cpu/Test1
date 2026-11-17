@@ -36,11 +36,12 @@ python3 -m http.server 8000
 
 Eigenständige Demo-Website einer (fiktiven) Sneaker-Marke: `schuhe/index.html` im Browser öffnen.
 
-- **Startseite:** Ein echtes 3D-Modell eines Sneakers (Three.js, mit Licht, Spiegelungen und Schatten) dreht sich beim Herunterscrollen einmal um 360°.
-  Die Drehung folgt einer leicht nachfedernden Bewegung, der Schuh neigt sich bei schnellen Drehungen und schwebt leicht.
-  Man kann ihn mit Maus oder Finger anfassen und mit Schwung drehen. Er folgt der Maus und wechselt zwischen drei Farbvarianten.
+- **Startseite:** Ein 3D-Leder-Sneaker (Three.js) steht hochkant und dreht sich beim Herunterscrollen einmal um 360°, mit weicher, nachfedernder Bewegung.
+  Mit der Maus lässt er sich greifen und drehen (waagerecht ziehen = drehen, senkrecht ziehen = kippen), auf dem Handy mit dem Finger.
+- **Farbauswahl:** Sechs Lederfarben (Cognac, Weiß, Schwarz, Salbei, Bordeaux, Marine). Beim Wechsel fließt die neue Farbe wie eine Flüssigkeit von der Auswahl aus über die ganze Seite.
+  Schuh, Hintergrund, Schrift und Akzente passen sich an, im Hintergrund schwimmen weiche Farbflecken. Farben stehen in `schuhe/src/themes.js`.
 - **Kollektion:** Sechs Modelle, die von außen hereinfliegen (linke Spalte von links, rechte von rechts, die Mitte von unten), mit Filter nach Kategorie und einem Warenkorb-Zähler.
 - Funktioniert per Doppelklick auf `index.html`: Three.js ist in `script.js` gebündelt, das Modell steckt in `assets/shoe-model.js`.
 - Code ändern: Quellen liegen in `schuhe/src/`. Danach `npm install` und `npm run build` im Ordner `schuhe/` ausführen.
-  Nach einem Modellwechsel (`assets/shoe.glb`) zusätzlich `npm run model`.
-- 3D-Modell: „Materials Variants Shoe“ © 2021 Shopify, CC BY 4.0 (Texturen auf 1024 px verkleinert). Die Karten der Kollektion nutzen weiterhin SVG-Grafiken.
+  Nach einem Modellwechsel (`assets/shoe.glb`) zusätzlich `npm run model`. `npm run single` erzeugt die Einzeldatei `nordlauf.html`.
+- 3D-Modell nach „Materials Variants Shoe“ © 2021 Shopify, CC BY 4.0. Zu Leder umgearbeitet: neue Narbungs-Textur, Rauheit und eine Farbmaske (`assets/leather-mask.jpg`), über die der Shader die Lederfarbe mischt. Die Karten der Kollektion nutzen weiterhin SVG-Grafiken.

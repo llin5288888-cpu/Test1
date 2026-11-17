@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2b150a">
 <title>NORDLAUF – Sneaker, die sich bewegen</title>
 <meta name="description" content="NORDLAUF: leichte Sneaker aus recycelten Materialien. Entdecke die Kollektion.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff5a1f'/%3E%3Cpath d='M8 22V10l16 12V10' stroke='%23111' stroke-width='3' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -14,6 +15,7 @@
 <script src="script.js" defer></script>
 </head>
 <body>
+<canvas class="liquid" id="liquid" aria-hidden="true"></canvas>
 
 <!-- Schuh-Grafik: einmal definiert, überall per <use> wiederverwendet. Farben kommen aus CSS-Variablen. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -53,48 +55,43 @@
 
 <main id="top">
   <!-- HERO: Der Schuh dreht sich beim Scrollen -->
-  <section class="hero" id="hero" data-color="midnight">
+  <section class="hero" id="hero">
     <div class="stage">
       <div class="bg-word" id="bgWord" aria-hidden="true">NORDLAUF NORDLAUF NORDLAUF</div>
-      <div class="glow" aria-hidden="true"></div>
 
       <div class="hero-text">
         <div class="chapter is-active" data-from="0" data-to="0.25">
-          <span class="eyebrow">Neu · Modell AERO 01</span>
-          <h1>Bewegung,<br>neu gedacht.</h1>
-          <p>Scroll nach unten und der Schuh dreht sich. Oder greif ihn dir und gib ihm Schwung.</p>
+          <span class="eyebrow">Neu · KÜSTE Leder-Sneaker</span>
+          <h1>Echtes Leder,<br>neu gedacht.</h1>
+          <p>Scroll nach unten und der Schuh dreht sich. Greif ihn mit der Maus und dreh ihn selbst – unten wählst du die Farbe.</p>
         </div>
         <div class="chapter" data-from="0.25" data-to="0.5">
-          <span class="eyebrow">01 · Gewicht</span>
-          <h2>Nur 212&nbsp;g.</h2>
-          <p>Ein gestricktes Obermaterial aus einem einzigen Faden. Kaum Nähte, kaum Gewicht.</p>
+          <span class="eyebrow">01 · Material</span>
+          <h2>Vollnarbiges Rindsleder.</h2>
+          <p>Pflanzlich gegerbt, weich vom ersten Tag an und mit einer Narbung, die mit jedem Schritt schöner wird.</p>
         </div>
         <div class="chapter" data-from="0.5" data-to="0.75">
-          <span class="eyebrow">02 · Dämpfung</span>
-          <h2>Federt zurück.</h2>
-          <p>Die Zwischensohle gibt 78&nbsp;% der Energie an deinen nächsten Schritt zurück.</p>
+          <span class="eyebrow">02 · Sohle</span>
+          <h2>Leicht wie ein Laufschuh.</h2>
+          <p>Unter dem Leder steckt eine federnde Schaumsohle – elegant genug fürs Büro, bequem genug für den ganzen Tag.</p>
         </div>
         <div class="chapter" data-from="0.75" data-to="1.01">
-          <span class="eyebrow">03 · Material</span>
-          <h2>63 Flaschen weniger.</h2>
-          <p>Jedes Paar besteht zu 70&nbsp;% aus recyceltem Kunststoff aus Nord- und Ostsee.</p>
+          <span class="eyebrow">03 · Handarbeit</span>
+          <h2>Sechs Farben. Ein Klassiker.</h2>
+          <p>Jedes Paar wird von Hand zugeschnitten und vernäht. Wähl unten deine Farbe – die ganze Seite zieht mit.</p>
           <a class="btn" href="#kollektion">Kollektion ansehen</a>
         </div>
       </div>
 
       <div class="shoe-wrap" id="shoeWrap">
-        <canvas id="shoeCanvas" role="img" aria-label="3D-Modell des Sneakers. Zum Drehen ziehen."></canvas>
+        <canvas id="shoeCanvas" role="img" aria-label="3D-Modell des Leder-Sneakers. Zum Drehen mit der Maus ziehen."></canvas>
         <svg class="fallback" viewBox="0 0 600 300" aria-hidden="true" data-color="glut"><use href="#shoe"/></svg>
         <div class="loader" id="loader"><span></span>3D-Modell lädt …</div>
       </div>
 
       <div class="hero-ui">
-        <div class="swatches" role="radiogroup" aria-label="Farbe wählen">
-          <button type="button" role="radio" aria-checked="true" data-variant="Midnight" data-color="midnight" style="--sw:#1e8fd8" aria-label="Ozeanblau"></button>
-          <button type="button" role="radio" aria-checked="false" data-variant="Beach" data-color="beach" style="--sw:#e3b3b9" aria-label="Rosé"></button>
-          <button type="button" role="radio" aria-checked="false" data-variant="Street" data-color="street" style="--sw:linear-gradient(135deg,#222 50%,#ff5d6c 50%)" aria-label="Schwarz/Koralle"></button>
-        </div>
-        <span class="color-name" id="colorName">Ozeanblau</span>
+        <div class="swatches" id="swatches" role="radiogroup" aria-label="Lederfarbe wählen"></div>
+        <span class="color-name" id="colorName">Cognac</span>
         <div class="degree" aria-hidden="true">
           <svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/><circle class="degree-bar" id="degreeBar" cx="22" cy="22" r="19"/></svg>
           <span id="degreeText">0°</span>
@@ -151,7 +148,7 @@
 
 <footer class="site-footer">
   <span>© 2026 NORDLAUF – fiktive Marke, Demo-Website</span>
-  <span>3D-Modell: „Materials Variants Shoe“ © 2021 Shopify, <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a> (Texturen verkleinert)</span>
+  <span>3D-Modell nach „Materials Variants Shoe“ © 2021 Shopify, <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a> – zu Leder umgearbeitet</span>
   <a href="#top">Nach oben ↑</a>
 </footer>
 

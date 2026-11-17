@@ -1,11 +1,13 @@
-// Startseite: echter 3D-Schuh (Three.js), der sich beim Scrollen natürlich dreht.
+// Startseite: 3D-Leder-Sneaker (Three.js), steht hochkant und dreht sich beim Scrollen.
 import {
-  WebGLRenderer, Scene, PerspectiveCamera, Group, Box3, Vector3, Mesh, PlaneGeometry,
+  WebGLRenderer, Scene, PerspectiveCamera, Group, Box3, Vector3, Mesh, PlaneGeometry, Color,
   ShadowMaterial, DirectionalLight, HemisphereLight, PMREMGenerator, ACESFilmicToneMapping,
-  SRGBColorSpace, PCFSoftShadowMap, MathUtils,
+  SRGBColorSpace, NoColorSpace, VSMShadowMap, MathUtils, TextureLoader,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { THEMES, applyPageColors } from "./themes.js";
+import { createLiquid } from "./liquid.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -22,8 +24,30 @@ export function initHero() {
   const degreeText = $("#degreeText");
   const degreeBar = $("#degreeBar");
   const colorName = $("#colorName");
+  const swatchBox = $("#swatches");
 
-  /* ---------- Scroll, Texte, Anzeige (läuft auch ohne WebGL) ---------- */
+  /* ---------- Farbwahl + schwimmender Hintergrund ---------- */
+  let theme = THEMES[0];
+  applyPageColors(theme);
+  const liquid = createLiquid($("#liquid"), theme, reduced);
+  let onTheme = () => {};
+
+  swatchBox.innerHTML = THEMES.map((t, i) => `<button type="button" role="radio" aria-checked="${i === 0}" aria-label="${t.name}" data-id="${t.id}" style="--sw:${t.shoe.upper}"></button>`).join("");
+  $$("button", swatchBox).forEach((b) => {
+    b.addEventListener("click", () => {
+      const next = THEMES.find((t) => t.id === b.dataset.id);
+      if (next === theme) return;
+      theme = next;
+      $$("button", swatchBox).forEach((x) => x.setAttribute("aria-checked", String(x === b)));
+      colorName.textContent = theme.name;
+      const r = b.getBoundingClientRect();
+      liquid.pour(theme, r.left + r.width / 2, r.top + r.height / 2);
+      applyPageColors(theme);
+      onTheme(theme);
+    });
+  });
+
+  /* ---------- Scroll, Texte, Anzeige ---------- */
   let progress = 0;
   function readScroll() {
     const rect = hero.getBoundingClientRect();
@@ -34,11 +58,11 @@ export function initHero() {
   }
 
   /* ---------- Bewegungsmodell ---------- */
-  // Der Winkel folgt dem Ziel (Scroll + Ziehen) über eine leicht unterdämpfte Feder:
-  // Der Schuh beschleunigt weich, schwingt minimal nach und kommt sanft zur Ruhe.
-  const START = -0.55; // leichte 3/4-Ansicht zu Beginn
+  // Winkel folgt dem Ziel (Scroll + Ziehen) über eine leicht unterdämpfte Feder.
+  const START = -0.35;
   let angle = START, vel = 0;
-  let drag = 0, dragVel = 0, dragging = false, lastX = 0, lastT = 0;
+  let drag = 0, dragVel = 0, dragging = false, lastX = 0, lastY = 0, lastT = 0;
+  let pitch = 0, pitchVel = 0, pitchGoal = 0; // senkrechtes Kippen mit der Maus
   let tiltX = 0, tiltY = 0, curTX = 0, curTY = 0;
 
   addEventListener("pointermove", (e) => {
@@ -48,7 +72,7 @@ export function initHero() {
   });
   wrap.addEventListener("pointerdown", (e) => {
     if (e.button > 0) return;
-    dragging = true; lastX = e.clientX; lastT = performance.now(); dragVel = 0;
+    dragging = true; lastX = e.clientX; lastY = e.clientY; lastT = performance.now(); dragVel = 0;
     wrap.classList.add("dragging");
     wrap.setPointerCapture(e.pointerId);
   });
@@ -57,25 +81,14 @@ export function initHero() {
     const now = performance.now();
     const d = (e.clientX - lastX) * 0.012;
     drag += d;
+    if (e.pointerType === "mouse") pitchGoal = clamp(pitchGoal + (e.clientY - lastY) * 0.006, -0.7, 0.7);
     const dt = Math.max(1, now - lastT) / 1000;
-    dragVel = MathUtils.lerp(dragVel, d / dt, 0.5); // Wurfgeschwindigkeit fürs Nachdrehen
-    lastX = e.clientX; lastT = now;
+    dragVel = MathUtils.lerp(dragVel, d / dt, 0.5);
+    lastX = e.clientX; lastY = e.clientY; lastT = now;
   });
-  const endDrag = () => { dragging = false; wrap.classList.remove("dragging"); };
+  const endDrag = () => { dragging = false; pitchGoal = 0; wrap.classList.remove("dragging"); };
   wrap.addEventListener("pointerup", endDrag);
   wrap.addEventListener("pointercancel", endDrag);
-
-  /* ---------- Farbwahl ---------- */
-  let applyVariant = () => {};
-  $$(".swatches button").forEach((b) => {
-    b.addEventListener("click", () => {
-      hero.dataset.color = b.dataset.color;
-      $$(".swatches button").forEach((x) => x.setAttribute("aria-checked", String(x === b)));
-      colorName.textContent = b.getAttribute("aria-label");
-      applyVariant(b.dataset.variant);
-      if (!reduced) dragVel += 9; // kleiner Schwung als Rückmeldung
-    });
-  });
 
   /* ---------- Three.js ---------- */
   let renderer;
@@ -90,42 +103,45 @@ export function initHero() {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = PCFSoftShadowMap;
+  renderer.shadowMap.type = VSMShadowMap; // weiche, unscharfe Schattenkanten
 
   const scene = new Scene();
   const pmrem = new PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.85;
+  scene.environmentIntensity = 0.9;
 
-  const camera = new PerspectiveCamera(28, 1, 0.01, 10);
-  const target = new Vector3(0, 0.065, 0);
+  const camera = new PerspectiveCamera(26, 1, 0.01, 10);
+  const target = new Vector3(0, 0, 0);
 
-  const key = new DirectionalLight(0xffffff, 2.2);
-  key.position.set(-0.35, 0.9, 0.45);
+  const key = new DirectionalLight(0xffffff, 2.4);
+  key.position.set(-0.4, 1.0, 0.55);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
-  key.shadow.camera.left = -0.3; key.shadow.camera.right = 0.3;
-  key.shadow.camera.top = 0.3; key.shadow.camera.bottom = -0.3;
-  key.shadow.camera.near = 0.1; key.shadow.camera.far = 2;
-  key.shadow.radius = 8;
+  Object.assign(key.shadow.camera, { left: -0.3, right: 0.3, top: 0.3, bottom: -0.3, near: 0.1, far: 3 });
+  key.shadow.mapSize.set(512, 512);
+  key.shadow.radius = 14;
+  key.shadow.blurSamples = 20;
   key.shadow.bias = -0.0005;
   scene.add(key);
-  const rim = new DirectionalLight(0xbcd0ff, 1.1);
-  rim.position.set(0.5, 0.35, -0.6);
+  const rim = new DirectionalLight(0xfff2e0, 1.3);
+  rim.position.set(0.6, 0.3, -0.5);
   scene.add(rim);
-  scene.add(new HemisphereLight(0xffffff, 0x222222, 0.35));
+  scene.add(new HemisphereLight(0xffffff, 0x332211, 0.35));
 
-  const ground = new Mesh(new PlaneGeometry(2, 2), new ShadowMaterial({ opacity: 0.45 }));
+  const ground = new Mesh(new PlaneGeometry(3, 3), new ShadowMaterial({ opacity: 0.3 }));
   ground.rotation.x = -Math.PI / 2;
+  ground.position.y = -0.21;
   ground.receiveShadow = true;
   scene.add(ground);
 
-  const turntable = new Group(); // dreht um die Hochachse
-  const body = new Group();      // Neigung, Schweben
-  turntable.add(body);
-  scene.add(turntable);
+  // Gruppen: lean (Neigung/Schweben) > turntable (Drehung um die Hochachse) > upright (hochkant) > Modell
+  const lean = new Group();
+  const turntable = new Group();
+  const upright = new Group();
+  upright.rotation.z = MathUtils.degToRad(78); // Spitze nach oben, leicht schräg
+  lean.add(turntable); turntable.add(upright); scene.add(lean);
 
   /* ---------- Größe & Ausschnitt ---------- */
   let W = 1, H = 1, mobile = false;
@@ -134,68 +150,89 @@ export function initHero() {
     mobile = W < 760;
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
-    // Schuh soll auf dem Desktop ~50 % der Breite einnehmen, mobil ~85 %
-    const shoeLen = 0.31;
-    const frac = mobile ? 0.84 : Math.min(0.46, 700 / W);
+    const tall = 0.33; // Höhe des hochkant stehenden Schuhs (Modelleinheiten)
+    const frac = mobile ? 0.46 : 0.64; // Anteil an der Bildhöhe
     const tanHalf = Math.tan(MathUtils.degToRad(camera.fov / 2));
-    let dist = shoeLen / (frac * 2 * tanHalf * camera.aspect);
-    dist = Math.max(dist, 0.26 / (0.62 * 2 * tanHalf)); // nicht höher als ~62 % der Höhe
-    const elev = MathUtils.degToRad(13);
-    camera.position.set(0, target.y + Math.sin(elev) * dist, Math.cos(elev) * dist);
+    let dist = tall / (frac * 2 * tanHalf);
+    dist = Math.max(dist, 0.2 / ((mobile ? 0.8 : 0.4) * 2 * tanHalf * camera.aspect)); // nicht zu breit
+    const elev = MathUtils.degToRad(6);
+    camera.position.set(0, Math.sin(elev) * dist, Math.cos(elev) * dist);
     camera.lookAt(target);
-    // Bildausschnitt verschieben: Desktop rechts von der Mitte, mobil im oberen Drittel
-    if (mobile) camera.setViewOffset(W, H, 0, H * 0.17, W, H);
-    else camera.setViewOffset(W, H, -W * 0.12, 0, W, H);
+    if (mobile) camera.setViewOffset(W, H, 0, H * 0.16, W, H);
+    else camera.setViewOffset(W, H, -W * 0.12, H * 0.035, W, H);
     camera.updateProjectionMatrix();
   }
   resize();
   addEventListener("resize", resize);
 
+  /* ---------- Ledermaterial ---------- */
+  // Farben werden im Shader aus einer Maske gemischt: R = Obermaterial, G = Aufnäher, B = Sohle, Rest = Senkel/Futter.
+  const toLin = (hex) => new Color(hex);
+  const cur = { upper: toLin(theme.shoe.upper), overlay: toLin(theme.shoe.overlay), sole: toLin(theme.shoe.sole), trim: toLin(theme.shoe.trim) };
+  const from = {}, to = {};
+  let colorT = 1;
+  const uniforms = {
+    uMask: { value: null },
+    uUpper: { value: cur.upper }, uOverlay: { value: cur.overlay }, uSole: { value: cur.sole }, uTrim: { value: cur.trim },
+  };
+  onTheme = (t) => {
+    for (const k of Object.keys(cur)) { from[k] = cur[k].clone(); to[k] = new Color(t.shoe[k]); }
+    colorT = reduced ? 0.999 : 0;
+  };
+
+  function makeLeather(mat) {
+    mat.roughness = 1;
+    mat.metalness = 0;
+    mat.envMapIntensity = 1;
+    mat.onBeforeCompile = (shader) => {
+      Object.assign(shader.uniforms, uniforms);
+      shader.fragmentShader = shader.fragmentShader
+        .replace("#include <common>", "#include <common>\nuniform sampler2D uMask;\nuniform vec3 uUpper, uOverlay, uSole, uTrim;")
+        .replace("#include <map_fragment>", `
+          #ifdef USE_MAP
+            vec4 baseTex = texture2D( map, vMapUv );
+            vec3 mk = texture2D( uMask, vMapUv ).rgb;
+            float lum = dot( baseTex.rgb, vec3( 0.2126, 0.7152, 0.0722 ) );
+            float trimW = clamp( 1.0 - mk.r - mk.g - mk.b, 0.0, 1.0 );
+            vec3 leather = uUpper * mk.r * clamp( lum / 0.19, 0.8, 1.12 ) + uOverlay * mk.g * clamp( lum / 0.035, 0.8, 1.15 )
+              + uSole * mk.b * clamp( lum / 0.8, 0.7, 1.08 )
+              + uTrim * trimW * clamp( lum / 0.03, 0.55, 1.5 );
+            diffuseColor.rgb *= leather;
+          #endif`);
+    };
+    mat.needsUpdate = true;
+  }
+
   /* ---------- Modell laden ---------- */
-  let model = null;
-  const variantCache = {};
+  let ready = 0;
+  const markReady = () => { if (++ready === 2) { renderer.compile(scene, camera); requestAnimationFrame(() => wrap.classList.add("ready")); } };
+  const fail = (err) => { console.error(err); wrap.classList.add("no-webgl"); };
+
+  new TextureLoader().load(window.SHOE_MASK, (tex) => {
+    tex.flipY = false; // wie glTF-Texturen
+    tex.colorSpace = NoColorSpace;
+    uniforms.uMask.value = tex;
+    markReady();
+  }, undefined, fail);
+
   try {
     const bin = atob(window.SHOE_GLB_B64 || "");
     const buf = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
     new GLTFLoader().parse(buf.buffer, "", (gltf) => {
-      model = gltf.scene;
+      const model = gltf.scene;
       const box = new Box3().setFromObject(model);
       const c = box.getCenter(new Vector3());
-      model.position.set(-c.x, -box.min.y, -c.z);
+      model.position.set(-c.x, -c.y, -c.z);
       model.traverse((o) => {
         if (!o.isMesh) return;
         o.castShadow = true;
-        o.userData.originalMaterial = o.material;
+        makeLeather(o.material);
       });
-      body.add(model);
-
-      const ext = gltf.userData.gltfExtensions && gltf.userData.gltfExtensions.KHR_materials_variants;
-      const names = ext ? ext.variants.map((v) => v.name.toLowerCase()) : [];
-      applyVariant = (name) => {
-        const idx = names.indexOf(String(name).toLowerCase());
-        if (idx < 0) return;
-        model.traverse(async (o) => {
-          const def = o.isMesh && o.userData.gltfExtensions && o.userData.gltfExtensions.KHR_materials_variants;
-          if (!def) return;
-          const map = def.mappings.find((m) => m.variants.includes(idx));
-          if (!map) { o.material = o.userData.originalMaterial; return; }
-          const k = map.material;
-          variantCache[k] = variantCache[k] || gltf.parser.getDependency("material", k);
-          o.material = await variantCache[k];
-          gltf.parser.assignFinalMaterial(o);
-        });
-      };
-      const active = $(".swatches [aria-checked='true']");
-      if (active) applyVariant(active.dataset.variant);
-      // Shader vorab kompilieren, damit die erste Drehung nicht ruckelt
-      renderer.compile(scene, camera);
-      requestAnimationFrame(() => wrap.classList.add("ready"));
-    }, (err) => { console.error(err); wrap.classList.add("no-webgl"); });
-  } catch (err) {
-    console.error(err);
-    wrap.classList.add("no-webgl");
-  }
+      upright.add(model);
+      markReady();
+    }, fail);
+  } catch (err) { fail(err); }
 
   /* ---------- Animationsschleife ---------- */
   let prev = performance.now();
@@ -209,27 +246,33 @@ export function initHero() {
       dragVel *= Math.exp(-2.6 * dt); // Reibung: Schwung läuft natürlich aus
     }
     const goal = START + progress * TAU + drag;
-    if (reduced) { angle = goal; vel = 0; }
+    if (reduced) { angle = goal; vel = 0; pitch = pitchGoal; }
     else {
-      const k = 38, c = 2 * Math.sqrt(k) * 0.82; // leicht unterdämpft
+      const k = 38, c = 2 * Math.sqrt(k) * 0.82;
       vel += (k * (goal - angle) - c * vel) * dt;
       angle += vel * dt;
+      const kp = 30, cp = 2 * Math.sqrt(kp) * 0.7;
+      pitchVel += (kp * (pitchGoal - pitch) - cp * pitchVel) * dt;
+      pitch += pitchVel * dt;
     }
     curTX += (tiltX - curTX) * (1 - Math.exp(-4 * dt));
     curTY += (tiltY - curTY) * (1 - Math.exp(-4 * dt));
 
+    if (colorT < 1) {
+      colorT = Math.min(1, colorT + dt / 1.1);
+      const e = colorT < 0.5 ? 2 * colorT * colorT : 1 - Math.pow(-2 * colorT + 2, 2) / 2;
+      for (const k of Object.keys(cur)) cur[k].lerpColors(from[k], to[k], e);
+    }
+
     if (visible) {
       const t = now / 1000;
-      const float = reduced ? 0 : Math.sin(t * 1.3) * 0.006 + 0.012;
-      turntable.rotation.y = angle + curTX * 0.25;
-      // In Kurven leicht neigen (wie ein Objekt mit Masse), Maus kippt sanft mit
-      body.rotation.z = clamp(-vel * 0.012, -0.12, 0.12) + Math.sin(progress * TAU) * 0.06;
-      body.rotation.x = curTY * 0.12 + Math.sin(t * 0.9) * (reduced ? 0 : 0.015);
-      body.position.y = float;
-      ground.material.opacity = 0.5 - float * 8;
+      turntable.rotation.y = angle + curTX * 0.3;
+      lean.rotation.z = clamp(-vel * 0.012, -0.14, 0.14) + Math.sin(progress * TAU) * 0.05;
+      lean.rotation.x = pitch + curTY * 0.12 + (reduced ? 0 : Math.sin(t * 0.9) * 0.02);
+      lean.position.y = reduced ? 0 : Math.sin(t * 1.3) * 0.006;
       renderer.render(scene, camera);
 
-      const deg = Math.round(((((angle - START) * 180) / Math.PI) % 360 + 360) % 360);
+      const deg = Math.round(((((angle - START) * 180) / Math.PI) % 360 + 360) % 360) % 360;
       degreeText.textContent = deg + "°";
       degreeBar.style.strokeDashoffset = 119.4 * (1 - deg / 360);
     }
