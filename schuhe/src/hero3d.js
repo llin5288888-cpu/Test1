@@ -214,7 +214,7 @@ export function initHero() {
       for (const k of keys) colors[k].lerpColors(from[k], to[k], e);
     }
 
-    if (visible) {
+    if (visible && !document.documentElement.dataset.pdp) { // pausiert, solange die Produktseite offen ist
       const t = now / 1000;
       turntable.rotation.y = angle + curTX * 0.3;
       lean.rotation.z = clamp(-vel * 0.012, -0.14, 0.14) + Math.sin(progress * TAU) * 0.05;

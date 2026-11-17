@@ -74,6 +74,7 @@ export function createLiquid(canvas, theme, reduced) {
 
   function frame(now) {
     requestAnimationFrame(frame); // zuerst: ein Fehler beim Zeichnen darf die Animation nie anhalten
+    if (document.documentElement.dataset.pdp) return; // Produktseite deckt alles ab
     const t = now / 1000;
     if (flood) {
       const k = Math.min(1, Math.max(0, (now - flood.start) / DUR)); // rAF-Zeit kann knapp vor dem Klick liegen

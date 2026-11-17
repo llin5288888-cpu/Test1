@@ -48,7 +48,7 @@
     <a href="#technik">Technik</a>
     <a href="#marke">Marke</a>
   </nav>
-  <button class="cart" type="button" aria-label="Warenkorb">
+  <button class="cart" type="button" aria-label="Warenkorb öffnen" aria-controls="drawer">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
     <span class="cart-count" id="cartCount">0</span>
   </button>
@@ -147,7 +147,19 @@
   <a href="#top">Nach oben ↑</a>
 </footer>
 
-<dialog class="gallery" id="gallery" aria-label="Fotos vom KÜSTE Low"></dialog>
+<!-- Produktseite im Vollformat (öffnet über #produkt) -->
+<section class="pdp" id="pdp" hidden aria-label="Produktseite KÜSTE Low"></section>
+
+<!-- Warenkorb: fährt von rechts heraus -->
+<div class="drawer-shade" id="drawerShade" hidden></div>
+<aside class="drawer" id="drawer" aria-label="Warenkorb" aria-hidden="true" inert>
+  <div class="drawer-head">
+    <h2>Warenkorb <span id="drawerCount"></span></h2>
+    <button type="button" class="drawer-close" id="drawerClose" aria-label="Warenkorb schließen">✕</button>
+  </div>
+  <div class="drawer-items" id="drawerItems"></div>
+  <div class="drawer-foot" id="drawerFoot"></div>
+</aside>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

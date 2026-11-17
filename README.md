@@ -44,9 +44,11 @@ oder `schuhe/index.html` zusammen mit den übrigen Dateien.
   Die Namensnennung im Fußbereich ist Pflicht der Lizenz und muss stehen bleiben.
 - **Farbauswahl:** Sechs Varianten (Panda, Cognac, Salbei, Bordeaux, Marine, Schwarz), jeweils Leder- und Sohlenfarbe. Beim Wechsel fließt die neue Farbe wie eine Flüssigkeit
   über die ganze Seite; Schuh, Hintergrund, Schrift und Akzente passen sich an, im Hintergrund schwimmen weiche Farbflecken. Farben: `src/themes.js`.
-- **Produkt:** Eine Produktanzeige für den KÜSTE Low (130 €), die von außen hereinfliegt: großes Foto, fünf Vorschaubilder, Farbwahl.
-  Ein Klick öffnet die Fotogalerie mit fünf Ansichten je Farbe (blättern per Pfeil, Taste oder Wischen), Größenwahl und Warenkorb.
-  „In 3D ansehen“ übernimmt die Farbe in den drehenden Schuh oben. Die Fotos stammen aus einem virtuellen Fotostudio (`src/studio.js`).
+- **Produkt:** Eine Produktanzeige für den KÜSTE Low (130 €), die von außen hereinfliegt. Ein Klick öffnet die **Produktseite im Vollformat**
+  (Adresse `#produkt`, der Zurück-Knopf des Browsers funktioniert): große Fotos mit fünf Ansichten je Farbe (Pfeile, Pfeiltasten, Wischen),
+  Farbwahl, Größenwahl und „In den Warenkorb“. Die Fotos stammen aus einem virtuellen Fotostudio (`src/studio.js`).
+- **Warenkorb:** Beim Kaufen fährt der Warenkorb von rechts heraus, mit Foto, Farbe, Größe, Menge (+/−), Entfernen und Summe.
+  Er bleibt im Browser gespeichert. „Zur Kasse“ ist eine Demo und bestellt nichts.
 
 ### Entwickeln
 
