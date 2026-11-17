@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="assets/shoe-model.js" defer></script>
 <script src="script.js" defer></script>
 </head>
 <body>
@@ -52,7 +53,7 @@
 
 <main id="top">
   <!-- HERO: Der Schuh dreht sich beim Scrollen -->
-  <section class="hero" id="hero" data-color="glut">
+  <section class="hero" id="hero" data-color="midnight">
     <div class="stage">
       <div class="bg-word" id="bgWord" aria-hidden="true">NORDLAUF NORDLAUF NORDLAUF</div>
       <div class="glow" aria-hidden="true"></div>
@@ -61,7 +62,7 @@
         <div class="chapter is-active" data-from="0" data-to="0.25">
           <span class="eyebrow">Neu · Modell AERO 01</span>
           <h1>Bewegung,<br>neu gedacht.</h1>
-          <p>Scroll nach unten und dreh den Schuh – oder zieh ihn mit der Maus.</p>
+          <p>Scroll nach unten und der Schuh dreht sich. Oder greif ihn dir und gib ihm Schwung.</p>
         </div>
         <div class="chapter" data-from="0.25" data-to="0.5">
           <span class="eyebrow">01 · Gewicht</span>
@@ -81,22 +82,19 @@
         </div>
       </div>
 
-      <div class="shoe-wrap" id="shoeWrap" title="Ziehen zum Drehen">
-        <div class="shoe-3d" id="shoe3d">
-          <svg class="layer face front" viewBox="0 0 600 300" role="img" aria-label="Sneaker AERO 01 in der Seitenansicht"><use href="#shoe"/></svg>
-          <svg class="layer face back" viewBox="0 0 600 300" aria-hidden="true"><use href="#shoe"/></svg>
-        </div>
-        <div class="shadow" id="shadow" aria-hidden="true"></div>
+      <div class="shoe-wrap" id="shoeWrap">
+        <canvas id="shoeCanvas" role="img" aria-label="3D-Modell des Sneakers. Zum Drehen ziehen."></canvas>
+        <svg class="fallback" viewBox="0 0 600 300" aria-hidden="true" data-color="glut"><use href="#shoe"/></svg>
+        <div class="loader" id="loader"><span></span>3D-Modell lädt …</div>
       </div>
 
       <div class="hero-ui">
         <div class="swatches" role="radiogroup" aria-label="Farbe wählen">
-          <button type="button" role="radio" aria-checked="true" data-color="glut" style="--sw:#ff5a1f" aria-label="Glut"></button>
-          <button type="button" role="radio" aria-checked="false" data-color="eis" style="--sw:#6fb7ff" aria-label="Eis"></button>
-          <button type="button" role="radio" aria-checked="false" data-color="wald" style="--sw:#3f7d4f" aria-label="Wald"></button>
-          <button type="button" role="radio" aria-checked="false" data-color="nacht" style="--sw:#d4ff3a" aria-label="Nacht"></button>
+          <button type="button" role="radio" aria-checked="true" data-variant="Midnight" data-color="midnight" style="--sw:#1e8fd8" aria-label="Ozeanblau"></button>
+          <button type="button" role="radio" aria-checked="false" data-variant="Beach" data-color="beach" style="--sw:#e3b3b9" aria-label="Rosé"></button>
+          <button type="button" role="radio" aria-checked="false" data-variant="Street" data-color="street" style="--sw:linear-gradient(135deg,#222 50%,#ff5d6c 50%)" aria-label="Schwarz/Koralle"></button>
         </div>
-        <span class="color-name" id="colorName">Glut</span>
+        <span class="color-name" id="colorName">Ozeanblau</span>
         <div class="degree" aria-hidden="true">
           <svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/><circle class="degree-bar" id="degreeBar" cx="22" cy="22" r="19"/></svg>
           <span id="degreeText">0°</span>
@@ -153,6 +151,7 @@
 
 <footer class="site-footer">
   <span>© 2026 NORDLAUF – fiktive Marke, Demo-Website</span>
+  <span>3D-Modell: „Materials Variants Shoe“ © 2021 Shopify, <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a> (Texturen verkleinert)</span>
   <a href="#top">Nach oben ↑</a>
 </footer>
 

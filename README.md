@@ -36,7 +36,11 @@ python3 -m http.server 8000
 
 Eigenständige Demo-Website einer (fiktiven) Sneaker-Marke: `schuhe/index.html` im Browser öffnen.
 
-- **Startseite:** Ein 3D-Sneaker dreht sich beim Herunterscrollen einmal um 360°. Dazu wechseln die Texte, die Hintergrundschrift läuft mit, und eine Gradanzeige zeigt die Drehung.
-  Der Schuh folgt der Maus, lässt sich mit Maus oder Finger drehen und in vier Farben anzeigen.
+- **Startseite:** Ein echtes 3D-Modell eines Sneakers (Three.js, mit Licht, Spiegelungen und Schatten) dreht sich beim Herunterscrollen einmal um 360°.
+  Die Drehung folgt einer leicht nachfedernden Bewegung, der Schuh neigt sich bei schnellen Drehungen und schwebt leicht.
+  Man kann ihn mit Maus oder Finger anfassen und mit Schwung drehen. Er folgt der Maus und wechselt zwischen drei Farbvarianten.
 - **Kollektion:** Sechs Modelle, die von außen hereinfliegen (linke Spalte von links, rechte von rechts, die Mitte von unten), mit Filter nach Kategorie und einem Warenkorb-Zähler.
-- Der Schuh ist eine einzige SVG-Grafik, die über CSS-Variablen eingefärbt wird. Keine Bibliotheken, kein Build-Schritt.
+- Funktioniert per Doppelklick auf `index.html`: Three.js ist in `script.js` gebündelt, das Modell steckt in `assets/shoe-model.js`.
+- Code ändern: Quellen liegen in `schuhe/src/`. Danach `npm install` und `npm run build` im Ordner `schuhe/` ausführen.
+  Nach einem Modellwechsel (`assets/shoe.glb`) zusätzlich `npm run model`.
+- 3D-Modell: „Materials Variants Shoe“ © 2021 Shopify, CC BY 4.0 (Texturen auf 1024 px verkleinert). Die Karten der Kollektion nutzen weiterhin SVG-Grafiken.

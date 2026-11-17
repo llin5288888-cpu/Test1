@@ -1,0 +1,12 @@
+{
+  "name": "nordlauf-website",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2019 --outfile=script.js",
+    "model": "node tools/embed-model.mjs assets/shoe.glb assets/shoe-model.js"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.0",
+    "three": "0.170.0"
+  }
+}
