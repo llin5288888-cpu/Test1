@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NORDLAUF – Sneaker, die sich bewegen</title>
+<meta name="description" content="NORDLAUF: leichte Sneaker aus recycelten Materialien. Entdecke die Kollektion.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff5a1f'/%3E%3Cpath d='M8 22V10l16 12V10' stroke='%23111' stroke-width='3' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+</head>
+<body>
+
+<!-- Schuh-Grafik: einmal definiert, überall per <use> wiederverwendet. Farben kommen aus CSS-Variablen. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="shoe" viewBox="0 0 600 300">
+    <path d="M168 86 Q174 50 206 48 Q224 50 222 70 L234 134 L212 128 Z" fill="var(--tongue)"/>
+    <path d="M38 234 Q36 264 74 266 L546 266 Q592 264 594 234 Z" fill="var(--outsole)"/>
+    <path d="M40 214 Q34 248 72 252 L545 252 Q594 250 592 222 Q590 206 566 205 L64 205 Q42 205 40 214 Z" fill="var(--sole)"/>
+    <path d="M82 234 Q300 244 566 230" stroke="var(--sole-line)" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M58 208 L56 150 Q56 112 86 98 L140 80 Q166 72 178 88 L214 128 Q236 148 284 150 L372 152 Q462 160 528 184 Q576 200 570 208 Z" fill="var(--upper)"/>
+    <path d="M56 150 Q56 112 86 98 L104 92 Q122 142 114 208 L58 208 Z" fill="var(--overlay)"/>
+    <path d="M418 157 Q490 166 528 184 Q576 200 570 208 L442 208 Q408 182 418 157 Z" fill="var(--overlay)"/>
+    <path d="M146 198 Q228 118 330 166 Q392 196 474 146 L484 164 Q394 218 322 186 Q236 148 166 206 Z" fill="var(--accent)"/>
+    <path d="M86 98 L140 80 Q166 72 178 88 L172 96 Q160 86 140 92 L92 108 Z" fill="var(--lining)"/>
+    <path d="M62 120 Q44 104 58 90 L76 98 Z" fill="var(--accent)"/>
+    <path d="M66 196 L562 198" stroke="var(--lining)" stroke-width="2" stroke-dasharray="7 6" fill="none" opacity=".7"/>
+    <g stroke="var(--lace)" stroke-width="7" stroke-linecap="round">
+      <path d="M186 106 L208 92"/><path d="M204 124 L228 108"/><path d="M226 140 L252 126"/><path d="M254 148 L278 136"/>
+    </g>
+    <g fill="var(--outsole)">
+      <circle cx="186" cy="106" r="4"/><circle cx="204" cy="124" r="4"/><circle cx="226" cy="140" r="4"/><circle cx="254" cy="148" r="4"/>
+    </g>
+  </symbol>
+</svg>
+
+<header class="site-header">
+  <a class="logo" href="#top">NORDLAUF<span>®</span></a>
+  <nav class="nav" aria-label="Hauptnavigation">
+    <a href="#kollektion">Kollektion</a>
+    <a href="#technik">Technik</a>
+    <a href="#marke">Marke</a>
+  </nav>
+  <button class="cart" type="button" aria-label="Warenkorb">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+</header>
+
+<main id="top">
+  <!-- HERO: Der Schuh dreht sich beim Scrollen -->
+  <section class="hero" id="hero" data-color="glut">
+    <div class="stage">
+      <div class="bg-word" id="bgWord" aria-hidden="true">NORDLAUF NORDLAUF NORDLAUF</div>
+      <div class="glow" aria-hidden="true"></div>
+
+      <div class="hero-text">
+        <div class="chapter is-active" data-from="0" data-to="0.25">
+          <span class="eyebrow">Neu · Modell AERO 01</span>
+          <h1>Bewegung,<br>neu gedacht.</h1>
+          <p>Scroll nach unten und dreh den Schuh – oder zieh ihn mit der Maus.</p>
+        </div>
+        <div class="chapter" data-from="0.25" data-to="0.5">
+          <span class="eyebrow">01 · Gewicht</span>
+          <h2>Nur 212&nbsp;g.</h2>
+          <p>Ein gestricktes Obermaterial aus einem einzigen Faden. Kaum Nähte, kaum Gewicht.</p>
+        </div>
+        <div class="chapter" data-from="0.5" data-to="0.75">
+          <span class="eyebrow">02 · Dämpfung</span>
+          <h2>Federt zurück.</h2>
+          <p>Die Zwischensohle gibt 78&nbsp;% der Energie an deinen nächsten Schritt zurück.</p>
+        </div>
+        <div class="chapter" data-from="0.75" data-to="1.01">
+          <span class="eyebrow">03 · Material</span>
+          <h2>63 Flaschen weniger.</h2>
+          <p>Jedes Paar besteht zu 70&nbsp;% aus recyceltem Kunststoff aus Nord- und Ostsee.</p>
+          <a class="btn" href="#kollektion">Kollektion ansehen</a>
+        </div>
+      </div>
+
+      <div class="shoe-wrap" id="shoeWrap" title="Ziehen zum Drehen">
+        <div class="shoe-3d" id="shoe3d">
+          <svg class="layer face front" viewBox="0 0 600 300" role="img" aria-label="Sneaker AERO 01 in der Seitenansicht"><use href="#shoe"/></svg>
+          <svg class="layer face back" viewBox="0 0 600 300" aria-hidden="true"><use href="#shoe"/></svg>
+        </div>
+        <div class="shadow" id="shadow" aria-hidden="true"></div>
+      </div>
+
+      <div class="hero-ui">
+        <div class="swatches" role="radiogroup" aria-label="Farbe wählen">
+          <button type="button" role="radio" aria-checked="true" data-color="glut" style="--sw:#ff5a1f" aria-label="Glut"></button>
+          <button type="button" role="radio" aria-checked="false" data-color="eis" style="--sw:#6fb7ff" aria-label="Eis"></button>
+          <button type="button" role="radio" aria-checked="false" data-color="wald" style="--sw:#3f7d4f" aria-label="Wald"></button>
+          <button type="button" role="radio" aria-checked="false" data-color="nacht" style="--sw:#d4ff3a" aria-label="Nacht"></button>
+        </div>
+        <span class="color-name" id="colorName">Glut</span>
+        <div class="degree" aria-hidden="true">
+          <svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="19"/><circle class="degree-bar" id="degreeBar" cx="22" cy="22" r="19"/></svg>
+          <span id="degreeText">0°</span>
+        </div>
+      </div>
+      <div class="scroll-cue" aria-hidden="true"><span></span>Scrollen</div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Leicht ✦ Recycelt ✦ Gemacht für Wind und Wetter ✦ 30 Tage Probelaufen ✦ Kostenloser Versand ✦ </span>
+      <span>Leicht ✦ Recycelt ✦ Gemacht für Wind und Wetter ✦ 30 Tage Probelaufen ✦ Kostenloser Versand ✦ </span>
+    </div>
+  </div>
+
+  <!-- KOLLEKTION: Karten fliegen von außen herein -->
+  <section class="collection" id="kollektion">
+    <div class="section-head">
+      <span class="eyebrow">Kollektion Herbst/Winter</span>
+      <h2>Finde deinen Schritt.</h2>
+      <div class="filters" role="group" aria-label="Kategorie filtern">
+        <button type="button" class="chip is-active" data-filter="alle">Alle</button>
+        <button type="button" class="chip" data-filter="running">Running</button>
+        <button type="button" class="chip" data-filter="lifestyle">Lifestyle</button>
+        <button type="button" class="chip" data-filter="trail">Trail</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="tech" id="technik">
+    <div class="tech-item fly" data-dir="left"><strong>212 g</strong><span>Gewicht pro Schuh (Gr. 42)</span></div>
+    <div class="tech-item fly" data-dir="up"><strong>78 %</strong><span>Energierückgabe der Sohle</span></div>
+    <div class="tech-item fly" data-dir="right"><strong>70 %</strong><span>recycelte Materialien</span></div>
+  </section>
+
+  <section class="brand" id="marke">
+    <div class="brand-text fly" data-dir="left">
+      <span class="eyebrow">Über NORDLAUF</span>
+      <h2>Gegründet an der Küste. Getestet bei Gegenwind.</h2>
+      <p>Wir entwerfen Schuhe für Menschen, die auch bei Nieselregen rausgehen. Jedes Modell läuft mindestens 800&nbsp;km im Test, bevor es in den Verkauf geht.</p>
+    </div>
+    <form class="newsletter fly" data-dir="right" id="newsletter">
+      <label for="nlMail">Neue Modelle zuerst sehen</label>
+      <div class="nl-row">
+        <input id="nlMail" type="email" placeholder="deine@email.de" required>
+        <button class="btn" type="submit">Anmelden</button>
+      </div>
+      <p class="nl-msg" id="nlMsg" role="status"></p>
+    </form>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span>© 2026 NORDLAUF – fiktive Marke, Demo-Website</span>
+  <a href="#top">Nach oben ↑</a>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
