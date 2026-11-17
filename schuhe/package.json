@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2019 --outfile=script.js",
-    "model": "node tools/embed-model.mjs assets/shoe.glb assets/leather-mask.jpg assets/shoe-model.js",
-    "single": "node tools/single-file.mjs nordlauf.html"
+    "single": "node tools/single-file.mjs nordlauf.html",
+    "photos": "node tools/render-products.mjs"
   },
   "devDependencies": {
     "esbuild": "0.24.0",

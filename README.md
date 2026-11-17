@@ -34,14 +34,23 @@ python3 -m http.server 8000
 
 ## Schuh-Website NORDLAUF (`schuhe/`)
 
-Eigenständige Demo-Website einer (fiktiven) Sneaker-Marke: `schuhe/index.html` im Browser öffnen.
+Eigenständige Demo-Website einer (fiktiven) Sneaker-Marke. Am einfachsten `schuhe/nordlauf.html` per Doppelklick öffnen (alles in einer Datei),
+oder `schuhe/index.html` zusammen mit den übrigen Dateien.
 
-- **Startseite:** Ein 3D-Leder-Sneaker (Three.js) steht hochkant und dreht sich beim Herunterscrollen einmal um 360°, mit weicher, nachfedernder Bewegung.
+- **Startseite:** Ein 3D-Leder-Sneaker (KÜSTE Low) steht hochkant und dreht sich beim Herunterscrollen einmal um 360°, mit weicher, nachfedernder Bewegung.
   Mit der Maus lässt er sich greifen und drehen (waagerecht ziehen = drehen, senkrecht ziehen = kippen), auf dem Handy mit dem Finger.
-- **Farbauswahl:** Sechs Lederfarben (Cognac, Weiß, Schwarz, Salbei, Bordeaux, Marine). Beim Wechsel fließt die neue Farbe wie eine Flüssigkeit von der Auswahl aus über die ganze Seite.
-  Schuh, Hintergrund, Schrift und Akzente passen sich an, im Hintergrund schwimmen weiche Farbflecken. Farben stehen in `schuhe/src/themes.js`.
-- **Kollektion:** Sechs Modelle, die von außen hereinfliegen (linke Spalte von links, rechte von rechts, die Mitte von unten), mit Filter nach Kategorie und einem Warenkorb-Zähler.
-- Funktioniert per Doppelklick auf `index.html`: Three.js ist in `script.js` gebündelt, das Modell steckt in `assets/shoe-model.js`.
-- Code ändern: Quellen liegen in `schuhe/src/`. Danach `npm install` und `npm run build` im Ordner `schuhe/` ausführen.
-  Nach einem Modellwechsel (`assets/shoe.glb`) zusätzlich `npm run model`. `npm run single` erzeugt die Einzeldatei `nordlauf.html`.
-- 3D-Modell nach „Materials Variants Shoe“ © 2021 Shopify, CC BY 4.0. Zu Leder umgearbeitet: neue Narbungs-Textur, Rauheit und eine Farbmaske (`assets/leather-mask.jpg`), über die der Shader die Lederfarbe mischt. Die Karten der Kollektion nutzen weiterhin SVG-Grafiken.
+- **Der Schuh:** komplett im Code modelliert (`src/sneaker.js`): flacher Low-Top-Court-Schuh mit Cupsole, Schutzleiste und Zehenkappe,
+  Schnürleiste, Fersenkappe, gepolstertem Kragen, Zunge mit Etikett, Schnürsenkeln, Ziernähten und Ledernarbung. Keine fremden Logos.
+- **Farbauswahl:** Sechs zweifarbige Varianten (Panda, Cognac, Salbei, Bordeaux, Marine, Schwarz). Beim Wechsel fließt die neue Farbe wie eine Flüssigkeit
+  über die ganze Seite; Schuh, Hintergrund, Schrift und Akzente passen sich an, im Hintergrund schwimmen weiche Farbflecken. Farben: `src/themes.js`.
+- **Kollektion:** Sechs Modelle mit Produktfotos aus einem virtuellen Fotostudio (`src/studio.js`), die von außen hereinfliegen,
+  mit Filter (Klassik, Saison, Limitiert), Warenkorb-Zähler und „In 3D ansehen“ (übernimmt die Farbe oben im 3D-Schuh).
+
+### Entwickeln
+
+Im Ordner `schuhe/`: `npm install`, dann
+- `npm run build` – bündelt `src/` zu `script.js`
+- `npm run photos` – rendert die Produktfotos neu (`assets/products/*.jpg`, `assets/product-photos.js`; benötigt Playwright mit Chromium)
+- `npm run single` – erzeugt die Einzeldatei `nordlauf.html`
+
+Produkte stehen in `src/products.json` (Name, Preis, Farbvariante, Hintergrund und Kamerawinkel fürs Foto).

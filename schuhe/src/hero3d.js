@@ -1,13 +1,14 @@
-// Startseite: 3D-Leder-Sneaker (Three.js), steht hochkant und dreht sich beim Scrollen.
+// Startseite: 3D-Leder-Sneaker (Three.js, selbst modelliert), steht hochkant und dreht sich beim Scrollen.
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Box3, Vector3, Mesh, PlaneGeometry, Color,
   ShadowMaterial, DirectionalLight, HemisphereLight, PMREMGenerator, ACESFilmicToneMapping,
-  SRGBColorSpace, NoColorSpace, VSMShadowMap, MathUtils, TextureLoader,
+  SRGBColorSpace, VSMShadowMap, MathUtils,
 } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { THEMES, applyPageColors } from "./themes.js";
+import { THEMES, themeById, applyPageColors } from "./themes.js";
 import { createLiquid } from "./liquid.js";
+import { buildSneaker } from "./sneaker.js";
+import { shoeColors } from "./paint.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -32,20 +33,20 @@ export function initHero() {
   const liquid = createLiquid($("#liquid"), theme, reduced);
   let onTheme = () => {};
 
-  swatchBox.innerHTML = THEMES.map((t, i) => `<button type="button" role="radio" aria-checked="${i === 0}" aria-label="${t.name}" data-id="${t.id}" style="--sw:${t.shoe.upper}"></button>`).join("");
-  $$("button", swatchBox).forEach((b) => {
-    b.addEventListener("click", () => {
-      const next = THEMES.find((t) => t.id === b.dataset.id);
-      if (next === theme) return;
-      theme = next;
-      $$("button", swatchBox).forEach((x) => x.setAttribute("aria-checked", String(x === b)));
-      colorName.textContent = theme.name;
-      const r = b.getBoundingClientRect();
-      liquid.pour(theme, r.left + r.width / 2, r.top + r.height / 2);
-      applyPageColors(theme);
-      onTheme(theme);
-    });
-  });
+  swatchBox.innerHTML = THEMES.map((t, i) => `<button type="button" role="radio" aria-checked="${i === 0}" aria-label="${t.name}" data-id="${t.id}" style="--sw:linear-gradient(135deg, ${t.shoe.base} 50%, ${t.shoe.overlay} 50%)"></button>`).join("");
+  function setTheme(id, originEl) {
+    const next = themeById(id);
+    if (next === theme) return;
+    theme = next;
+    const btn = $(`[data-id="${id}"]`, swatchBox);
+    $$("button", swatchBox).forEach((x) => x.setAttribute("aria-checked", String(x === btn)));
+    colorName.textContent = theme.name;
+    const r = (originEl || btn).getBoundingClientRect();
+    liquid.pour(theme, r.left + r.width / 2, r.top + r.height / 2);
+    applyPageColors(theme);
+    onTheme(theme);
+  }
+  $$("button", swatchBox).forEach((b) => b.addEventListener("click", () => setTheme(b.dataset.id)));
 
   /* ---------- Scroll, Texte, Anzeige ---------- */
   let progress = 0;
@@ -59,7 +60,7 @@ export function initHero() {
 
   /* ---------- Bewegungsmodell ---------- */
   // Winkel folgt dem Ziel (Scroll + Ziehen) über eine leicht unterdämpfte Feder.
-  const START = -0.35;
+  const START = 0.5; // Start: Schnürung und Außenseite im Blick
   let angle = START, vel = 0;
   let drag = 0, dragVel = 0, dragging = false, lastX = 0, lastY = 0, lastT = 0;
   let pitch = 0, pitchVel = 0, pitchGoal = 0; // senkrechtes Kippen mit der Maus
@@ -98,7 +99,7 @@ export function initHero() {
     wrap.classList.add("no-webgl");
     const loop = () => { readScroll(); requestAnimationFrame(loop); };
     loop();
-    return;
+    return { setTheme };
   }
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = SRGBColorSpace;
@@ -150,7 +151,7 @@ export function initHero() {
     mobile = W < 760;
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
-    const tall = 0.33; // Höhe des hochkant stehenden Schuhs (Modelleinheiten)
+    const tall = 0.31; // Höhe des hochkant stehenden Schuhs (Modelleinheiten)
     const frac = mobile ? 0.46 : 0.64; // Anteil an der Bildhöhe
     const tanHalf = Math.tan(MathUtils.degToRad(camera.fov / 2));
     let dist = tall / (frac * 2 * tanHalf);
@@ -165,74 +166,25 @@ export function initHero() {
   resize();
   addEventListener("resize", resize);
 
-  /* ---------- Ledermaterial ---------- */
-  // Farben werden im Shader aus einer Maske gemischt: R = Obermaterial, G = Aufnäher, B = Sohle, Rest = Senkel/Futter.
-  const toLin = (hex) => new Color(hex);
-  const cur = { upper: toLin(theme.shoe.upper), overlay: toLin(theme.shoe.overlay), sole: toLin(theme.shoe.sole), trim: toLin(theme.shoe.trim) };
+  /* ---------- Modell (prozedural) ---------- */
+  const { root: sneaker, mats } = buildSneaker();
+  sneaker.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  const box = new Box3().setFromObject(sneaker);
+  sneaker.position.sub(box.getCenter(new Vector3()));
+  upright.add(sneaker);
+
+  // Farben: weicher Übergang aller Materialien zur neuen Farbvariante
+  const keys = Object.keys(shoeColors(theme.shoe));
   const from = {}, to = {};
+  for (const [k, v] of Object.entries(shoeColors(theme.shoe))) mats[k].color.set(v);
   let colorT = 1;
-  const uniforms = {
-    uMask: { value: null },
-    uUpper: { value: cur.upper }, uOverlay: { value: cur.overlay }, uSole: { value: cur.sole }, uTrim: { value: cur.trim },
-  };
   onTheme = (t) => {
-    for (const k of Object.keys(cur)) { from[k] = cur[k].clone(); to[k] = new Color(t.shoe[k]); }
+    const target = shoeColors(t.shoe);
+    for (const k of keys) { from[k] = mats[k].color.clone(); to[k] = new Color(target[k]); }
     colorT = reduced ? 0.999 : 0;
   };
-
-  function makeLeather(mat) {
-    mat.roughness = 1;
-    mat.metalness = 0;
-    mat.envMapIntensity = 1;
-    mat.onBeforeCompile = (shader) => {
-      Object.assign(shader.uniforms, uniforms);
-      shader.fragmentShader = shader.fragmentShader
-        .replace("#include <common>", "#include <common>\nuniform sampler2D uMask;\nuniform vec3 uUpper, uOverlay, uSole, uTrim;")
-        .replace("#include <map_fragment>", `
-          #ifdef USE_MAP
-            vec4 baseTex = texture2D( map, vMapUv );
-            vec3 mk = texture2D( uMask, vMapUv ).rgb;
-            float lum = dot( baseTex.rgb, vec3( 0.2126, 0.7152, 0.0722 ) );
-            float trimW = clamp( 1.0 - mk.r - mk.g - mk.b, 0.0, 1.0 );
-            vec3 leather = uUpper * mk.r * clamp( lum / 0.19, 0.8, 1.12 ) + uOverlay * mk.g * clamp( lum / 0.035, 0.8, 1.15 )
-              + uSole * mk.b * clamp( lum / 0.8, 0.7, 1.08 )
-              + uTrim * trimW * clamp( lum / 0.03, 0.55, 1.5 );
-            diffuseColor.rgb *= leather;
-          #endif`);
-    };
-    mat.needsUpdate = true;
-  }
-
-  /* ---------- Modell laden ---------- */
-  let ready = 0;
-  const markReady = () => { if (++ready === 2) { renderer.compile(scene, camera); requestAnimationFrame(() => wrap.classList.add("ready")); } };
-  const fail = (err) => { console.error(err); wrap.classList.add("no-webgl"); };
-
-  new TextureLoader().load(window.SHOE_MASK, (tex) => {
-    tex.flipY = false; // wie glTF-Texturen
-    tex.colorSpace = NoColorSpace;
-    uniforms.uMask.value = tex;
-    markReady();
-  }, undefined, fail);
-
-  try {
-    const bin = atob(window.SHOE_GLB_B64 || "");
-    const buf = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
-    new GLTFLoader().parse(buf.buffer, "", (gltf) => {
-      const model = gltf.scene;
-      const box = new Box3().setFromObject(model);
-      const c = box.getCenter(new Vector3());
-      model.position.set(-c.x, -c.y, -c.z);
-      model.traverse((o) => {
-        if (!o.isMesh) return;
-        o.castShadow = true;
-        makeLeather(o.material);
-      });
-      upright.add(model);
-      markReady();
-    }, fail);
-  } catch (err) { fail(err); }
+  renderer.compile(scene, camera);
+  requestAnimationFrame(() => wrap.classList.add("ready"));
 
   /* ---------- Animationsschleife ---------- */
   let prev = performance.now();
@@ -261,7 +213,7 @@ export function initHero() {
     if (colorT < 1) {
       colorT = Math.min(1, colorT + dt / 1.1);
       const e = colorT < 0.5 ? 2 * colorT * colorT : 1 - Math.pow(-2 * colorT + 2, 2) / 2;
-      for (const k of Object.keys(cur)) cur[k].lerpColors(from[k], to[k], e);
+      for (const k of keys) mats[k].color.lerpColors(from[k], to[k], e);
     }
 
     if (visible) {
@@ -279,4 +231,5 @@ export function initHero() {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+  return { setTheme };
 }

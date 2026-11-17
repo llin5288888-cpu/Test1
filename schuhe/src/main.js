@@ -1,41 +1,47 @@
 // Einstieg: wird mit esbuild zu ../script.js gebündelt (npm run build).
 import { initHero } from "./hero3d.js";
+import products from "./products.json";
+import { themeById } from "./themes.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
-initHero();
+const hero = initHero();
 
 /* ===================== KOLLEKTION ===================== */
-const swatchHex = { glut: "#ff5a1f", eis: "#6fb7ff", wald: "#3f7d4f", nacht: "#d4ff3a", sand: "#d9c7a7", koralle: "#ff7b72" };
-const products = [
-  { name: "AERO 01", cat: "running", label: "Running", price: 159, color: "glut", colors: ["glut", "eis", "nacht"], badge: "Neu" },
-  { name: "BÖE Racer", cat: "running", label: "Running · Wettkampf", price: 179, color: "eis", colors: ["eis", "koralle"], badge: "Bestseller" },
-  { name: "FJORD Trail", cat: "trail", label: "Trail", price: 169, color: "wald", colors: ["wald", "sand"] },
-  { name: "DÜNE Low", cat: "lifestyle", label: "Lifestyle", price: 119, color: "sand", colors: ["sand", "eis", "glut"] },
-  { name: "MOOR GTX", cat: "trail", label: "Trail · Wasserdicht", price: 189, color: "nacht", colors: ["nacht", "wald"], badge: "Wasserdicht" },
-  { name: "HAFEN Classic", cat: "lifestyle", label: "Lifestyle", price: 129, color: "koralle", colors: ["koralle", "sand", "nacht"] },
-];
-
+// Produktfotos stammen aus dem virtuellen Fotostudio (tools/render-products.cjs) und liegen als Daten-URLs vor.
+const photos = window.PRODUCT_PHOTOS || {};
 const grid = $("#grid");
-grid.innerHTML = products.map((p) => `
+grid.innerHTML = products.map((p) => {
+  const t = themeById(p.theme);
+  return `
   <div class="fly-cell" data-cat="${p.cat}">
-    <article class="card fly" data-color="${p.color}">
+    <article class="card fly">
       <div class="card-media">
         ${p.badge ? `<span class="badge">${p.badge}</span>` : ""}
-        <svg viewBox="0 0 600 300" role="img" aria-label="${p.name}"><use href="#shoe"/></svg>
+        <img src="${photos[p.id] || ""}" alt="${p.name} – Leder-Sneaker im Fotostudio" loading="lazy" width="1000" height="750">
+        <button class="view3d" type="button" data-theme="${p.theme}">In 3D ansehen</button>
       </div>
       <div class="card-body">
         <h3>${p.name}</h3>
         <span class="price">${p.price} €</span>
         <div>
           <span class="cat">${p.label}</span>
-          <div class="dots">${p.colors.map((c) => `<i style="--d:${swatchHex[c]}" title="${c}"></i>`).join("")}</div>
+          <div class="dots"><i style="--d:${t.shoe.base}"></i><i style="--d:${t.shoe.overlay}"></i></div>
         </div>
         <button class="add" type="button" aria-label="${p.name} in den Warenkorb" data-name="${p.name}">+</button>
       </div>
     </article>
-  </div>`).join("");
+  </div>`;
+}).join("");
+
+// "In 3D ansehen": Farbe übernehmen und zum drehenden Schuh springen
+grid.addEventListener("click", (e) => {
+  const b = e.target.closest(".view3d");
+  if (!b) return;
+  scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  setTimeout(() => hero && hero.setTheme(b.dataset.theme, b), 350);
+});
 
 // Statische .fly-Elemente in eine Zelle packen: Der Observer beobachtet die unbewegte
 // Zelle, damit das weit nach außen verschobene Element trotzdem erkannt wird.
