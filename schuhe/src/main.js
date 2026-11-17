@@ -27,7 +27,7 @@ grid.innerHTML = products.map((p) => {
         <span class="price">${p.price} €</span>
         <div>
           <span class="cat">${p.label}</span>
-          <div class="dots"><i style="--d:${t.shoe.base}"></i><i style="--d:${t.shoe.overlay}"></i></div>
+          <div class="dots"><i style="--d:${t.shoe.upper}"></i><i style="--d:${t.shoe.sole}"></i></div>
         </div>
         <button class="add" type="button" aria-label="${p.name} in den Warenkorb" data-name="${p.name}">+</button>
       </div>

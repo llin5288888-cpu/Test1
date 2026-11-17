@@ -39,9 +39,10 @@ oder `schuhe/index.html` zusammen mit den übrigen Dateien.
 
 - **Startseite:** Ein 3D-Leder-Sneaker (KÜSTE Low) steht hochkant und dreht sich beim Herunterscrollen einmal um 360°, mit weicher, nachfedernder Bewegung.
   Mit der Maus lässt er sich greifen und drehen (waagerecht ziehen = drehen, senkrecht ziehen = kippen), auf dem Handy mit dem Finger.
-- **Der Schuh:** komplett im Code modelliert (`src/sneaker.js`): flacher Low-Top-Court-Schuh mit Cupsole, Schutzleiste und Zehenkappe,
-  Schnürleiste, Fersenkappe, gepolstertem Kragen, Zunge mit Etikett, Schnürsenkeln, Ziernähten und Ledernarbung. Keine fremden Logos.
-- **Farbauswahl:** Sechs zweifarbige Varianten (Panda, Cognac, Salbei, Bordeaux, Marine, Schwarz). Beim Wechsel fließt die neue Farbe wie eine Flüssigkeit
+- **Der Schuh:** 3D-Modell „boing01白“ von yihsuanchen13 ([Sketchfab](https://sketchfab.com/3d-models/f3cb4debfb024e7580fc2f52ae13a295), CC BY 4.0),
+  über die paprika3D-Bibliothek für das Web optimiert. Das weiße Modell wird im Shader eingefärbt: Obermaterial und Plateau-Sohle getrennt (`src/shoeModel.js`).
+  Die Namensnennung im Fußbereich ist Pflicht der Lizenz und muss stehen bleiben.
+- **Farbauswahl:** Sechs Varianten (Panda, Cognac, Salbei, Bordeaux, Marine, Schwarz), jeweils Leder- und Sohlenfarbe. Beim Wechsel fließt die neue Farbe wie eine Flüssigkeit
   über die ganze Seite; Schuh, Hintergrund, Schrift und Akzente passen sich an, im Hintergrund schwimmen weiche Farbflecken. Farben: `src/themes.js`.
 - **Kollektion:** Sechs Modelle mit Produktfotos aus einem virtuellen Fotostudio (`src/studio.js`), die von außen hereinfliegen,
   mit Filter (Klassik, Saison, Limitiert), Warenkorb-Zähler und „In 3D ansehen“ (übernimmt die Farbe oben im 3D-Schuh).
@@ -50,6 +51,7 @@ oder `schuhe/index.html` zusammen mit den übrigen Dateien.
 
 Im Ordner `schuhe/`: `npm install`, dann
 - `npm run build` – bündelt `src/` zu `script.js`
+- `npm run model` – bettet `assets/shoe.glb` in `assets/shoe-model.js` ein (damit die Seite per Doppelklick läuft)
 - `npm run photos` – rendert die Produktfotos neu (`assets/products/*.jpg`, `assets/product-photos.js`; benötigt Playwright mit Chromium)
 - `npm run single` – erzeugt die Einzeldatei `nordlauf.html`
 

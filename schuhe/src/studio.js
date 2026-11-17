@@ -6,8 +6,7 @@ import {
   ShadowMaterial, CanvasTexture,
 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { buildSneaker } from "./sneaker.js";
-import { paintSneaker } from "./paint.js";
+import { loadShoe } from "./shoeModel.js";
 
 function contactShadow() {
   const c = document.createElement("canvas"); c.width = 256; c.height = 128;
@@ -18,7 +17,7 @@ function contactShadow() {
   return new CanvasTexture(c);
 }
 
-export function createStudio(canvas, width, height) {
+export async function createStudio(canvas, width, height, modelB64) {
   const renderer = new WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(1);
   renderer.setSize(width, height, false);
@@ -66,16 +65,18 @@ export function createStudio(canvas, width, height) {
   const rim = new DirectionalLight(0xffffff, 1.4); rim.position.set(0.3, 0.6, -1); scene.add(rim);
   scene.add(new HemisphereLight(0xffffff, 0x8a8070, 0.4));
 
-  const { root, mats } = buildSneaker();
-  root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  const shoe = await loadShoe(modelB64);
+  shoe.root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  const root = shoe.root;
   scene.add(root);
 
   const camera = new PerspectiveCamera(24, width / height, 0.01, 10);
 
   return {
-    renderer, scene, root, mats,
+    renderer, scene, root, shoe,
     shoot({ colors, backdrop, yaw = -0.6, camPos = [0.38, 0.17, 0.58], target = [0, 0.05, 0], liftShoe = 0 }) {
-      paintSneaker(mats, colors);
+      shoe.colors.upper.set(colors.upper);
+      shoe.colors.sole.set(colors.sole);
       backdropMat.color.set(backdrop);
       root.rotation.set(0, yaw, 0);
       root.position.y = liftShoe;

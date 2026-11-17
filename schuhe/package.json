@@ -4,10 +4,12 @@
   "scripts": {
     "build": "esbuild src/main.js --bundle --minify --format=iife --target=es2019 --outfile=script.js",
     "single": "node tools/single-file.mjs nordlauf.html",
-    "photos": "node tools/render-products.mjs"
+    "photos": "node tools/render-products.mjs",
+    "model": "node tools/embed-model.mjs assets/shoe.glb assets/shoe-model.js"
   },
   "devDependencies": {
     "esbuild": "0.24.0",
     "three": "0.170.0"
-  }
+  },
+  "type": "module"
 }

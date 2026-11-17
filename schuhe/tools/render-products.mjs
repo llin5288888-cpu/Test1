@@ -23,12 +23,13 @@ await page.waitForFunction(() => window.createStudio);
 const shots = products.map((p) => ({
   id: p.id,
   colors: THEMES.find((t) => t.id === p.theme).shoe,
-  backdrop: p.backdrop, yaw: p.yaw, camPos: p.cam.map((v, i) => v * (i === 1 ? 0.95 : 0.93)), target: [0.022, 0.047, 0],
+  backdrop: p.backdrop, yaw: p.yaw, camPos: p.cam, target: [0.005, 0.042, 0],
 }));
-const urls = await page.evaluate(({ shots, W, H }) => {
-  const studio = window.createStudio(document.getElementById("c"), W, H);
+const modelB64 = readFileSync("assets/shoe.glb").toString("base64");
+const urls = await page.evaluate(async ({ shots, W, H, modelB64 }) => {
+  const studio = await window.createStudio(document.getElementById("c"), W, H, modelB64);
   return shots.map((s) => studio.shoot(s));
-}, { shots, W, H });
+}, { shots, W, H, modelB64 });
 await browser.close();
 
 const map = {};

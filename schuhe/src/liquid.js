@@ -66,16 +66,17 @@ export function createLiquid(canvas, theme, reduced) {
     for (const d of f.drops) {
       const dr = R * (1 + d.lead * (1 - k)) + d.off;
       const x = f.x + Math.cos(d.a) * dr, y = f.y + Math.sin(d.a) * dr;
-      const s = d.size * Math.min(1, k * 4) * (1 - k * 0.6) * Math.max(W, H);
+      const s = Math.max(0, d.size * Math.min(1, k * 4) * (1 - k * 0.6) * Math.max(W, H));
       ctx.moveTo(x + s, y);
       ctx.arc(x, y, s, 0, Math.PI * 2);
     }
   }
 
   function frame(now) {
+    requestAnimationFrame(frame); // zuerst: ein Fehler beim Zeichnen darf die Animation nie anhalten
     const t = now / 1000;
     if (flood) {
-      const k = Math.min(1, (now - flood.start) / DUR);
+      const k = Math.min(1, Math.max(0, (now - flood.start) / DUR)); // rAF-Zeit kann knapp vor dem Klick liegen
       const e = easeInOut(k);
       drawWorld(world, t);
       ctx.save();
@@ -87,7 +88,6 @@ export function createLiquid(canvas, theme, reduced) {
     } else {
       drawWorld(world, t);
     }
-    requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 

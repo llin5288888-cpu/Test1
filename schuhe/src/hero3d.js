@@ -1,4 +1,4 @@
-// Startseite: 3D-Leder-Sneaker (Three.js, selbst modelliert), steht hochkant und dreht sich beim Scrollen.
+// Startseite: 3D-Leder-Sneaker (Three.js), steht hochkant und dreht sich beim Scrollen.
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Box3, Vector3, Mesh, PlaneGeometry, Color,
   ShadowMaterial, DirectionalLight, HemisphereLight, PMREMGenerator, ACESFilmicToneMapping,
@@ -7,8 +7,7 @@ import {
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { THEMES, themeById, applyPageColors } from "./themes.js";
 import { createLiquid } from "./liquid.js";
-import { buildSneaker } from "./sneaker.js";
-import { shoeColors } from "./paint.js";
+import { loadShoe } from "./shoeModel.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -33,7 +32,7 @@ export function initHero() {
   const liquid = createLiquid($("#liquid"), theme, reduced);
   let onTheme = () => {};
 
-  swatchBox.innerHTML = THEMES.map((t, i) => `<button type="button" role="radio" aria-checked="${i === 0}" aria-label="${t.name}" data-id="${t.id}" style="--sw:linear-gradient(135deg, ${t.shoe.base} 50%, ${t.shoe.overlay} 50%)"></button>`).join("");
+  swatchBox.innerHTML = THEMES.map((t, i) => `<button type="button" role="radio" aria-checked="${i === 0}" aria-label="${t.name}" data-id="${t.id}" style="--sw:linear-gradient(135deg, ${t.shoe.upper} 55%, ${t.shoe.sole} 55%)"></button>`).join("");
   function setTheme(id, originEl) {
     const next = themeById(id);
     if (next === theme) return;
@@ -151,7 +150,7 @@ export function initHero() {
     mobile = W < 760;
     renderer.setSize(W, H, false);
     camera.aspect = W / H;
-    const tall = 0.31; // Höhe des hochkant stehenden Schuhs (Modelleinheiten)
+    const tall = 0.3; // Höhe des hochkant stehenden Schuhs (Modelleinheiten)
     const frac = mobile ? 0.46 : 0.64; // Anteil an der Bildhöhe
     const tanHalf = Math.tan(MathUtils.degToRad(camera.fov / 2));
     let dist = tall / (frac * 2 * tanHalf);
@@ -166,25 +165,24 @@ export function initHero() {
   resize();
   addEventListener("resize", resize);
 
-  /* ---------- Modell (prozedural) ---------- */
-  const { root: sneaker, mats } = buildSneaker();
-  sneaker.traverse((o) => { if (o.isMesh) o.castShadow = true; });
-  const box = new Box3().setFromObject(sneaker);
-  sneaker.position.sub(box.getCenter(new Vector3()));
-  upright.add(sneaker);
-
-  // Farben: weicher Übergang aller Materialien zur neuen Farbvariante
-  const keys = Object.keys(shoeColors(theme.shoe));
+  /* ---------- Modell ---------- */
+  const keys = ["upper", "sole"];
   const from = {}, to = {};
-  for (const [k, v] of Object.entries(shoeColors(theme.shoe))) mats[k].color.set(v);
-  let colorT = 1;
+  let colors = null, colorT = 1;
   onTheme = (t) => {
-    const target = shoeColors(t.shoe);
-    for (const k of keys) { from[k] = mats[k].color.clone(); to[k] = new Color(target[k]); }
+    if (!colors) return;
+    for (const k of keys) { from[k] = colors[k].clone(); to[k] = new Color(t.shoe[k]); }
     colorT = reduced ? 0.999 : 0;
   };
-  renderer.compile(scene, camera);
-  requestAnimationFrame(() => wrap.classList.add("ready"));
+  loadShoe(window.SHOE_GLB_B64 || "").then((shoe) => {
+    const box = new Box3().setFromObject(shoe.root);
+    shoe.root.position.sub(box.getCenter(new Vector3()));
+    upright.add(shoe.root);
+    colors = shoe.colors;
+    for (const k of keys) colors[k].set(theme.shoe[k]);
+    renderer.compile(scene, camera);
+    requestAnimationFrame(() => wrap.classList.add("ready"));
+  }).catch((err) => { console.error(err); wrap.classList.add("no-webgl"); });
 
   /* ---------- Animationsschleife ---------- */
   let prev = performance.now();
@@ -210,10 +208,10 @@ export function initHero() {
     curTX += (tiltX - curTX) * (1 - Math.exp(-4 * dt));
     curTY += (tiltY - curTY) * (1 - Math.exp(-4 * dt));
 
-    if (colorT < 1) {
+    if (colorT < 1 && colors) {
       colorT = Math.min(1, colorT + dt / 1.1);
       const e = colorT < 0.5 ? 2 * colorT * colorT : 1 - Math.pow(-2 * colorT + 2, 2) / 2;
-      for (const k of keys) mats[k].color.lerpColors(from[k], to[k], e);
+      for (const k of keys) colors[k].lerpColors(from[k], to[k], e);
     }
 
     if (visible) {
