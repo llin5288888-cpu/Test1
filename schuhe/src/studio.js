@@ -36,7 +36,7 @@ export async function createStudio(canvas, width, height, modelB64) {
   const p = sweepGeo.attributes.position;
   for (let i = 0; i < p.count; i++) {
     const t = (p.getY(i) + 1.5) / 3; // 0 vorne … 1 hinten
-    const d = t * 1.6 - 0.35; // Tiefe
+    const d = t * 2.2 - 0.95; // Tiefe (Boden reicht weit nach vorne)
     const r = 0.35;
     let y = 0, z = -d;
     if (d > 0.25) { const a = Math.min(Math.PI / 2, (d - 0.25) / r); y = r - Math.cos(a) * r; z = -(0.25 + Math.sin(a) * r); if ((d - 0.25) / r > Math.PI / 2) { y = r + (d - 0.25 - r * Math.PI / 2); z = -(0.25 + r); } }
@@ -84,7 +84,7 @@ export async function createStudio(canvas, width, height, modelB64) {
       camera.lookAt(new Vector3(...target));
       camera.updateProjectionMatrix();
       renderer.render(scene, camera);
-      return canvas.toDataURL("image/jpeg", 0.84);
+      return canvas.toDataURL("image/jpeg", 0.8);
     },
   };
 }

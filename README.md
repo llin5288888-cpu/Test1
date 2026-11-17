@@ -44,15 +44,16 @@ oder `schuhe/index.html` zusammen mit den übrigen Dateien.
   Die Namensnennung im Fußbereich ist Pflicht der Lizenz und muss stehen bleiben.
 - **Farbauswahl:** Sechs Varianten (Panda, Cognac, Salbei, Bordeaux, Marine, Schwarz), jeweils Leder- und Sohlenfarbe. Beim Wechsel fließt die neue Farbe wie eine Flüssigkeit
   über die ganze Seite; Schuh, Hintergrund, Schrift und Akzente passen sich an, im Hintergrund schwimmen weiche Farbflecken. Farben: `src/themes.js`.
-- **Kollektion:** Sechs Modelle mit Produktfotos aus einem virtuellen Fotostudio (`src/studio.js`), die von außen hereinfliegen,
-  mit Filter (Klassik, Saison, Limitiert), Warenkorb-Zähler und „In 3D ansehen“ (übernimmt die Farbe oben im 3D-Schuh).
+- **Produkt:** Eine Produktanzeige für den KÜSTE Low (130 €), die von außen hereinfliegt: großes Foto, fünf Vorschaubilder, Farbwahl.
+  Ein Klick öffnet die Fotogalerie mit fünf Ansichten je Farbe (blättern per Pfeil, Taste oder Wischen), Größenwahl und Warenkorb.
+  „In 3D ansehen“ übernimmt die Farbe in den drehenden Schuh oben. Die Fotos stammen aus einem virtuellen Fotostudio (`src/studio.js`).
 
 ### Entwickeln
 
 Im Ordner `schuhe/`: `npm install`, dann
 - `npm run build` – bündelt `src/` zu `script.js`
 - `npm run model` – bettet `assets/shoe.glb` in `assets/shoe-model.js` ein (damit die Seite per Doppelklick läuft)
-- `npm run photos` – rendert die Produktfotos neu (`assets/products/*.jpg`, `assets/product-photos.js`; benötigt Playwright mit Chromium)
+- `npm run photos` – rendert die Produktfotos neu: jede Farbe aus jedem Blickwinkel (`assets/products/*.jpg`, `assets/product-photos.js`; benötigt Playwright mit Chromium)
 - `npm run single` – erzeugt die Einzeldatei `nordlauf.html`
 
-Produkte stehen in `src/products.json` (Name, Preis, Farbvariante, Hintergrund und Kamerawinkel fürs Foto).
+Das Produkt steht in `src/product.json` (Name, Preis, Texte, Größen, Farben, Fotohintergründe und Kamerawinkel).

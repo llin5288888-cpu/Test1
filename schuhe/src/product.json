@@ -1,0 +1,118 @@
+{
+  "id": "kueste-low",
+  "name": "KÜSTE Low",
+  "subtitle": "Leder-Sneaker mit Plateau-Sohle",
+  "price": 130,
+  "description": "Weiches Glattleder, eine umlaufend gerillte Gummisohle mit vier Zentimetern Plateau und ein gepolsterter Einstieg. Ein Schuh für jeden Tag – in sechs Farben.",
+  "details": [
+    "Obermaterial: Glattleder",
+    "Futter: Leder",
+    "Sohle: Naturkautschuk, 4 cm Plateau",
+    "Gewicht: ca. 390 g (Gr. 42)"
+  ],
+  "sizes": [
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "colorways": [
+    "panda",
+    "cognac",
+    "salbei",
+    "bordeaux",
+    "marine",
+    "schwarz"
+  ],
+  "backdrops": {
+    "panda": "#e7e4de",
+    "cognac": "#ecd7c0",
+    "salbei": "#dde5d6",
+    "bordeaux": "#ecd8d8",
+    "marine": "#d8dee9",
+    "schwarz": "#cfcac2"
+  },
+  "views": [
+    {
+      "id": "front",
+      "label": "Schräg vorne",
+      "yaw": -0.35,
+      "cam": [
+        0.13,
+        0.15,
+        0.6
+      ],
+      "target": [
+        0.005,
+        0.042,
+        0
+      ]
+    },
+    {
+      "id": "side",
+      "label": "Seite außen",
+      "yaw": 0,
+      "cam": [
+        0,
+        0.1,
+        0.66
+      ],
+      "target": [
+        0,
+        0.05,
+        0
+      ]
+    },
+    {
+      "id": "inner",
+      "label": "Seite innen",
+      "yaw": 3.4916,
+      "cam": [
+        0.13,
+        0.15,
+        0.6
+      ],
+      "target": [
+        0.005,
+        0.042,
+        0
+      ]
+    },
+    {
+      "id": "heel",
+      "label": "Ferse",
+      "yaw": 2.15,
+      "cam": [
+        0.1,
+        0.17,
+        0.52
+      ],
+      "target": [
+        0,
+        0.045,
+        0
+      ]
+    },
+    {
+      "id": "top",
+      "label": "Von oben",
+      "yaw": -0.25,
+      "cam": [
+        0.05,
+        0.52,
+        0.38
+      ],
+      "target": [
+        0,
+        0.025,
+        0
+      ]
+    }
+  ]
+}
