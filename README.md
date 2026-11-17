@@ -50,6 +50,15 @@ oder `schuhe/index.html` zusammen mit den übrigen Dateien.
 - **Warenkorb:** Beim Kaufen fährt der Warenkorb von rechts heraus, mit Foto, Farbe, Größe, Menge (+/−), Entfernen und Summe.
   Er bleibt im Browser gespeichert. „Zur Kasse“ ist eine Demo und bestellt nichts.
 
+- **Navigation:** Menüknöpfe gleiten mit einer animierten Fahrt zum Abschnitt (kein Sprung). Auf dem Handy gibt es ein aufklappbares Menü.
+- **Unterseiten** (öffnen im Vollformat mit weißem Hintergrund, eigene Adresse, Zurück-Knopf funktioniert):
+  Impressum, Datenschutz, AGB, Widerrufsbelehrung, „Vertrag widerrufen“ (Widerrufsfunktion), Versand & Zahlung, FAQ, Kontakt, Größentabelle, Barrierefreiheit, Kasse.
+- **Kasse (Demo):** Bestellübersicht mit MwSt.-Ausweis, Pflichtfeld-Prüfung, Knopf „Zahlungspflichtig bestellen“ und Bestellbestätigung. Es wird nichts bestellt.
+- **Datenschutz/Technik:** Schriften (Inter, Archivo Black, SIL OFL) sind eingebettet, die Seite lädt nichts von fremden Servern und setzt keine Cookies.
+  Preisangaben mit „inkl. MwSt.“, strukturierte Produktdaten (schema.org) und Open-Graph-Angaben für Suchmaschinen und soziale Netzwerke.
+
+**Wichtig vor einer Veröffentlichung:** Alle gelb markierten Platzhalter in den Rechtstexten (`src/pages.js`) ersetzen und die Texte von einer Fachperson prüfen lassen.
+
 ### Entwickeln
 
 Im Ordner `schuhe/`: `npm install`, dann
@@ -57,5 +66,6 @@ Im Ordner `schuhe/`: `npm install`, dann
 - `npm run model` – bettet `assets/shoe.glb` in `assets/shoe-model.js` ein (damit die Seite per Doppelklick läuft)
 - `npm run photos` – rendert die Produktfotos neu: jede Farbe aus jedem Blickwinkel (`assets/products/*.jpg`, `assets/product-photos.js`; benötigt Playwright mit Chromium)
 - `npm run single` – erzeugt die Einzeldatei `nordlauf.html`
+- `node tools/embed-fonts.mjs` – bettet die Schriften in `assets/fonts.css` ein
 
 Das Produkt steht in `src/product.json` (Name, Preis, Texte, Größen, Farben, Fotohintergründe und Kamerawinkel).

@@ -4,18 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#d8d5cf">
-<title>NORDLAUF – Sneaker, die sich bewegen</title>
-<meta name="description" content="NORDLAUF: leichte Sneaker aus recycelten Materialien. Entdecke die Kollektion.">
+<title>KÜSTE Low – Leder-Sneaker mit Plateau | NORDLAUF</title>
+<meta name="description" content="Der KÜSTE Low von NORDLAUF: Leder-Sneaker mit 4 cm Plateau-Sohle in sechs Farben. 130 € inkl. MwSt., kostenloser Versand, 30 Tage Probelaufen.">
+<meta property="og:type" content="product">
+<meta property="og:title" content="KÜSTE Low – Leder-Sneaker | NORDLAUF">
+<meta property="og:description" content="Leder-Sneaker mit Plateau-Sohle in sechs Farben. 130 € inkl. MwSt.">
+<meta property="og:locale" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Product","name":"KÜSTE Low","brand":{"@type":"Brand","name":"NORDLAUF"},
+"description":"Leder-Sneaker mit 4 cm Plateau-Sohle aus Naturkautschuk, in sechs Farben.",
+"offers":{"@type":"Offer","price":"130.00","priceCurrency":"EUR","availability":"https://schema.org/InStock",
+"shippingDetails":{"@type":"OfferShippingDetails","shippingRate":{"@type":"MonetaryAmount","value":"0","currency":"EUR"}}}}
+</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff5a1f'/%3E%3Cpath d='M8 22V10l16 12V10' stroke='%23111' stroke-width='3' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="style.css">
 <script src="assets/shoe-model.js" defer></script>
 <script src="assets/product-photos.js" defer></script>
 <script src="script.js" defer></script>
 </head>
 <body>
+<a class="skip-link" href="#top" data-scroll="top">Zum Inhalt springen</a>
 <canvas class="liquid" id="liquid" aria-hidden="true"></canvas>
 
 <!-- Schuh-Grafik: einmal definiert, überall per <use> wiederverwendet. Farben kommen aus CSS-Variablen. -->
@@ -42,12 +52,15 @@
 </svg>
 
 <header class="site-header">
-  <a class="logo" href="#top">NORDLAUF<span>®</span></a>
-  <nav class="nav" aria-label="Hauptnavigation">
-    <a href="#kollektion">Produkt</a>
-    <a href="#technik">Technik</a>
-    <a href="#marke">Marke</a>
+  <a class="logo" href="#top" data-scroll="top">NORDLAUF<span>®</span></a>
+  <nav class="nav" id="mainNav" aria-label="Hauptnavigation">
+    <a href="#kollektion" data-scroll="kollektion">Produkt</a>
+    <a href="#technik" data-scroll="technik">Technik</a>
+    <a href="#marke" data-scroll="marke">Marke</a>
+    <a href="#faq">Hilfe</a>
+    <a href="#kontakt">Kontakt</a>
   </nav>
+  <button class="nav-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mainNav"><span></span></button>
   <button class="cart" type="button" aria-label="Warenkorb öffnen" aria-controls="drawer">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
     <span class="cart-count" id="cartCount">0</span>
@@ -80,7 +93,7 @@
           <span class="eyebrow">03 · Handarbeit</span>
           <h2>Sechs Farben. Ein Klassiker.</h2>
           <p>Jedes Paar wird von Hand zugeschnitten und vernäht. Wähl unten deine Farbe – die ganze Seite zieht mit.</p>
-          <a class="btn" href="#kollektion">Zum Produkt – 130 €</a>
+          <a class="btn" href="#kollektion" data-scroll="kollektion">Zum Produkt – 130 €</a>
         </div>
       </div>
 
@@ -104,8 +117,8 @@
 
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span>Leicht ✦ Recycelt ✦ Gemacht für Wind und Wetter ✦ 30 Tage Probelaufen ✦ Kostenloser Versand ✦ </span>
-      <span>Leicht ✦ Recycelt ✦ Gemacht für Wind und Wetter ✦ 30 Tage Probelaufen ✦ Kostenloser Versand ✦ </span>
+      <span>Echtes Leder ✦ 4 cm Plateau ✦ 30 Tage Probelaufen ✦ Kostenloser Versand ✦ Sechs Farben ✦ </span>
+      <span>Echtes Leder ✦ 4 cm Plateau ✦ 30 Tage Probelaufen ✦ Kostenloser Versand ✦ Sechs Farben ✦ </span>
     </div>
   </div>
 
@@ -118,10 +131,13 @@
     <article class="product" id="product" aria-label="Produkt KÜSTE Low"></article>
   </section>
 
-  <section class="tech" id="technik">
-    <div class="tech-item fly" data-dir="left"><strong>212 g</strong><span>Gewicht pro Schuh (Gr. 42)</span></div>
-    <div class="tech-item fly" data-dir="up"><strong>78 %</strong><span>Energierückgabe der Sohle</span></div>
-    <div class="tech-item fly" data-dir="right"><strong>70 %</strong><span>recycelte Materialien</span></div>
+  <section class="tech-wrap" id="technik">
+    <div class="section-head"><span class="eyebrow">Technik</span><h2>Was im KÜSTE Low steckt.</h2></div>
+    <div class="tech">
+      <div class="tech-item fly" data-dir="left"><strong>4 cm</strong><span>Plateau aus Naturkautschuk mit umlaufenden Rillen</span></div>
+      <div class="tech-item fly" data-dir="up"><strong>100 %</strong><span>Leder im Obermaterial und im Futter</span></div>
+      <div class="tech-item fly" data-dir="right"><strong>390 g</strong><span>pro Schuh in Größe 42</span></div>
+    </div>
   </section>
 
   <section class="brand" id="marke">
@@ -131,21 +147,53 @@
       <p>Wir entwerfen Schuhe für Menschen, die auch bei Nieselregen rausgehen. Jedes Modell läuft mindestens 800&nbsp;km im Test, bevor es in den Verkauf geht.</p>
     </div>
     <form class="newsletter fly" data-dir="right" id="newsletter">
-      <label for="nlMail">Neue Modelle zuerst sehen</label>
+      <label for="nlMail">Neue Farben zuerst sehen</label>
       <div class="nl-row">
         <input id="nlMail" type="email" placeholder="deine@email.de" required>
         <button class="btn" type="submit">Anmelden</button>
       </div>
+      <p class="nl-note">Kostenlos und jederzeit abbestellbar. Mit der Anmeldung stimmst du dem Erhalt des Newsletters zu; Details in der <a href="#datenschutz">Datenschutzerklärung</a>. Du bekommst zuerst eine Bestätigungs-E-Mail (Double-Opt-in).</p>
       <p class="nl-msg" id="nlMsg" role="status"></p>
     </form>
   </section>
 </main>
 
 <footer class="site-footer">
-  <span>© 2026 NORDLAUF – fiktive Marke, Demo-Website</span>
-  <span>3D-Modell: „boing01白“ von <a href="https://sketchfab.com/3d-models/f3cb4debfb024e7580fc2f52ae13a295" rel="noopener">yihsuanchen13</a>, <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>, über paprika3D für das Web optimiert und eingefärbt</span>
-  <a href="#top">Nach oben ↑</a>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a class="logo" href="#top" data-scroll="top">NORDLAUF<span>®</span></a>
+      <p>Leder-Sneaker aus Hamburg. Gegründet an der Küste, getestet bei Gegenwind.</p>
+      <ul class="perks"><li>Kostenloser Versand</li><li>30 Tage Probelaufen</li><li>Sichere Zahlung</li></ul>
+    </div>
+    <nav aria-label="Shop"><h3>Shop</h3>
+      <a href="#kollektion" data-scroll="kollektion">KÜSTE Low – 130 €</a>
+      <a href="#produkt">Produktseite</a>
+      <a href="#groessen">Größentabelle</a>
+    </nav>
+    <nav aria-label="Service"><h3>Service</h3>
+      <a href="#faq">Häufige Fragen</a>
+      <a href="#versand">Versand & Zahlung</a>
+      <a href="#kontakt">Kontakt</a>
+      <a href="#widerrufen" class="foot-strong">Vertrag widerrufen</a>
+    </nav>
+    <nav aria-label="Rechtliches"><h3>Rechtliches</h3>
+      <a href="#impressum">Impressum</a>
+      <a href="#datenschutz">Datenschutz</a>
+      <a href="#agb">AGB</a>
+      <a href="#widerruf">Widerrufsbelehrung</a>
+      <a href="#barrierefreiheit">Barrierefreiheit</a>
+    </nav>
+  </div>
+  <div class="foot-pay" aria-label="Zahlungsarten"><span>Rechnung</span><span>PayPal</span><span>Visa</span><span>Mastercard</span><span>Vorkasse</span></div>
+  <div class="foot-bottom">
+    <span>© 2026 NORDLAUF – Demo-Website, fiktive Marke. Alle Preise inkl. MwSt.</span>
+    <span>3D-Modell: „boing01白“ von <a href="https://sketchfab.com/3d-models/f3cb4debfb024e7580fc2f52ae13a295" rel="noopener" target="_blank">yihsuanchen13</a>, <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener" target="_blank">CC BY 4.0</a>, eingefärbt</span>
+    <a href="#top" data-scroll="top">Nach oben ↑</a>
+  </div>
 </footer>
+
+<!-- Unterseiten im Vollformat (Impressum, Datenschutz, Kasse …), öffnen über die Adresse -->
+<section class="pdp subpage" id="page" hidden></section>
 
 <!-- Produktseite im Vollformat (öffnet über #produkt) -->
 <section class="pdp" id="pdp" hidden aria-label="Produktseite KÜSTE Low"></section>

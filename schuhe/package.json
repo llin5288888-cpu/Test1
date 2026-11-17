@@ -8,6 +8,8 @@
     "model": "node tools/embed-model.mjs assets/shoe.glb assets/shoe-model.js"
   },
   "devDependencies": {
+    "@fontsource/archivo-black": "^5.1.0",
+    "@fontsource/inter": "^5.1.0",
     "esbuild": "0.24.0",
     "three": "0.170.0"
   },
