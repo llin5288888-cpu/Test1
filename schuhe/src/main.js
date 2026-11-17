@@ -42,7 +42,7 @@ document.addEventListener("click", (e) => {
   e.preventDefault();
   closeMenu();
   const id = a.dataset.scroll;
-  if (overlayOpen()) { leaveOverlays(); requestAnimationFrame(() => flyTo(id)); } else flyTo(id);
+  if (overlayOpen()) leaveOverlays(id); else flyTo(id);
 });
 
 /* ===================== HANDY-MENÜ ===================== */
@@ -186,6 +186,7 @@ $("#product3d").addEventListener("click", (e) => {
 const page = $("#page");
 const PAGE_IDS = [...Object.keys(PAGES), "kasse"];
 let returnY = 0;
+let pendingFly = null; // Ziel, zu dem nach dem Schließen einer Unterseite geglitten wird
 const overlayOpen = () => !pdp.hidden || !page.hidden;
 function setOverlay(on) {
   if (on) root.dataset.pdp = "1"; else delete root.dataset.pdp; // pausiert 3D-Schuh und Farbhintergrund
@@ -219,17 +220,21 @@ function route() {
   pdp.hidden = true; page.hidden = true; setOverlay(false);
   document.title = BASE_TITLE;
   if (wasOpen) {
-    const target = id && document.getElementById(id);
-    if (target) requestAnimationFrame(() => flyTo(id)); else scrollTo(0, returnY);
+    scrollTo(0, returnY);
+    const to = pendingFly || (id && document.getElementById(id) ? id : null);
+    pendingFly = null;
+    if (to) requestAnimationFrame(() => flyTo(to));
   }
 }
 function go(id) {
   if (location.hash === `#${id}`) route();
   else location.hash = id;
 }
-function leaveOverlays() {
-  history.pushState(null, "", location.pathname + location.search);
-  route();
+// Nur einfache #namen verwenden (kein pushState): funktioniert so auch eingebettet, z. B. als claude.ai-Artefakt
+function leaveOverlays(flyTarget = null) {
+  pendingFly = flyTarget;
+  if (location.hash && location.hash !== "#") location.hash = "";
+  else route();
 }
 function back() {
   if (history.state && history.state.fromSite) history.back();
