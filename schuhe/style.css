@@ -20,7 +20,7 @@ html { scroll-behavior: smooth; background: var(--bg); transition: --bg 1.2s var
 body {
   margin: 0;
   overflow-x: clip;
-  background: transparent;
+  background: var(--bg); /* wie im Artefakt: Grundfarbe direkt auf der Seite, die Farbflut liegt darüber */
   color: var(--text);
   font: 400 16px/1.6 Inter, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;

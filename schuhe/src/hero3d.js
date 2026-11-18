@@ -172,7 +172,7 @@ export function initHero() {
   onTheme = (t) => {
     if (!colors) return;
     for (const k of keys) { from[k] = colors[k].clone(); to[k] = new Color(t.shoe[k]); }
-    colorT = reduced ? 0.999 : 0;
+    colorT = 0; // Schuhfarbe gleitet immer mit der Farbflut
   };
   loadShoe(window.SHOE_GLB_B64 || "").then((shoe) => {
     const box = new Box3().setFromObject(shoe.root);

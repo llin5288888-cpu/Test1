@@ -10,7 +10,7 @@ export function createLiquid(canvas, theme, reduced) {
   let W = 0, H = 0, scale = 1;
   let world = theme.page;
   let flood = null; // { page, x, y, start, dur, maxR, drops }
-  const DUR = reduced ? 1 : 1500;
+  const DUR = 1500; // Farbflut läuft immer gleich ab (auch bei „Bewegung reduzieren“), wie gewünscht
 
   // Feste Bahnen für die Farbflecken: jede mit eigenem Tempo und eigener Größe
   const blobs = Array.from({ length: 6 }, (_, i) => ({
